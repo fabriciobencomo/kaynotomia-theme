@@ -31,6 +31,7 @@
         <img
           src="{{ section.settings.image | img_url: '1400x' }}"
           alt="{{ section.settings.image.alt | escape }}"
+          width="{{ section.settings.image.width }}" height="{{ section.settings.image.height }}"
           loading="lazy"
         >
       {%- endif -%}

@@ -46,6 +46,7 @@
                 <img
                   src="{{ block.settings.image | image_url: width: 2000 }}"
                   alt="{{ block.settings.image.alt | escape }}"
+                  width="{{ block.settings.image.width }}" height="{{ block.settings.image.height }}"
                   class="hero-media hero-media-image"
                   loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
                 >
@@ -85,6 +86,7 @@
                 <img
                   src="{{ block.settings.image | image_url: width: 2000 }}"
                   alt="{{ block.settings.image.alt | escape }}"
+                  width="{{ block.settings.image.width }}" height="{{ block.settings.image.height }}"
                   class="hero-media hero-media-image"
                   loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
                 >
@@ -103,6 +105,7 @@
                   <img
                     src="{{ block.settings.mobile_image | image_url: width: 1000 }}"
                     alt="{{ block.settings.mobile_image.alt | escape }}"
+                    width="{{ block.settings.mobile_image.width }}" height="{{ block.settings.mobile_image.height }}"
                     class="hero-media hero-media-image"
                     loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
                   >
@@ -142,6 +145,7 @@
                   <img
                     src="{{ block.settings.mobile_image | image_url: width: 1000 }}"
                     alt="{{ block.settings.mobile_image.alt | escape }}"
+                    width="{{ block.settings.mobile_image.width }}" height="{{ block.settings.mobile_image.height }}"
                     class="hero-media hero-media-image"
                     loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
                   >
