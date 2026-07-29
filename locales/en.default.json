@@ -1,0 +1,73 @@
+{
+  "general": {
+    "accessibility": {
+      "skip_to_content": "Skip to content"
+    },
+    "breadcrumb": {
+      "home": "Home",
+      "collections": "Collections",
+      "journal": "Journal"
+    },
+    "newsletter": {
+      "success": "Thanks!"
+    },
+    "pagination": {
+      "previous": "Previous",
+      "next": "Next"
+    }
+  },
+  "products": {
+    "product": {
+      "add_to_cart": "Add to cart",
+      "sold_out": "Sold out",
+      "from_price": "From",
+      "customizable": "Customizable"
+    }
+  },
+  "collections": {
+    "general": {
+      "no_products": "No products in this collection yet.",
+      "product_count": {
+        "one": "{{ count }} product",
+        "other": "{{ count }} products"
+      }
+    }
+  },
+  "blogs": {
+    "general": {
+      "read_more": "Read more",
+      "no_articles": "No articles published yet.",
+      "back_to_blog": "Back to the journal",
+      "posted_on": "Published on"
+    }
+  },
+  "cart": {
+    "general": {
+      "title": "Cart",
+      "empty": "Your cart is empty."
+    }
+  },
+  "contact": {
+    "eyebrow": "Contact",
+    "channels": "Channels",
+    "hours_label": "Opening hours",
+    "based_in": "Based in",
+    "form_heading": "Send us a message",
+    "sent_title": "Message sent",
+    "sent_body": "We'll get back to you within 48 hours.",
+    "field_name": "Name",
+    "field_email": "Email",
+    "field_subject": "Subject",
+    "field_message": "Message",
+    "ph_name": "Your name",
+    "ph_email": "you@email.com",
+    "ph_message": "Tell us how we can help you…",
+    "topic_placeholder": "Select a topic",
+    "topic_order": "Order enquiry",
+    "topic_custom": "Customization",
+    "topic_shipping": "Shipping & returns",
+    "topic_press": "Press & collaborations",
+    "topic_other": "Other",
+    "submit": "Send message"
+  }
+}

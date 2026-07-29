@@ -1,0 +1,36 @@
+# Configuración de Theme Check (linter oficial de Shopify)
+# Ejecutar en local:  shopify theme check
+root: "."
+
+extends: "theme-check:recommended"
+
+# Ajustes para un tema a medida sin sistema de build.
+# Revisar cada 3-6 meses: lo que hoy se silencia por ruido puede convenir activarlo.
+AssetSizeCSS:
+  enabled: true
+  threshold_in_bytes: 100000
+
+AssetSizeJavaScript:
+  enabled: true
+  threshold_in_bytes: 100000
+
+# Este tema escribe CSS en línea dentro de las secciones por diseño.
+# Si algún día se migra a assets/, quitar esta excepción.
+ParserBlockingScript:
+  enabled: true
+
+# Detecta claves de traducción que no existen en locales/*.json.
+# Es la comprobación que más valor aporta aquí: el fallo que ya ocurrió
+# en main-page-contact.liquid lo habría cazado.
+TranslationKeyExists:
+  enabled: true
+
+# Detecta snippets o secciones referenciados que no existen.
+MissingTemplate:
+  enabled: true
+
+ValidSchema:
+  enabled: true
+
+ValidJSON:
+  enabled: true

@@ -1,0 +1,13 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-collection",
+      "settings": {
+        "show_eyebrow": true,
+        "show_count": false,
+        "products_per_page": 24
+      }
+    }
+  },
+  "order": ["main"]
+}

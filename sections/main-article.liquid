@@ -1,0 +1,110 @@
+{% comment %}
+  sections/main-article.liquid
+  NUEVO. Ver la nota de main-blog.liquid.
+
+  El JSON-LD de tipo Article lo genera snippets/structured-data.liquid,
+  no esta sección.
+{% endcomment %}
+
+<style>
+  .art-wrap { padding-top:72px; }
+  .art-head { max-width:820px; margin:0 auto; padding:80px 24px 48px; }
+  @media(min-width:1024px){ .art-head { padding:100px 24px 56px; } }
+
+  .art-crumbs { font-size:10px; font-weight:500; letter-spacing:.28em; text-transform:uppercase; color:var(--text-muted); margin-bottom:32px; }
+  .art-crumbs a { color:var(--text-muted); text-decoration:none; transition:color .25s; }
+  .art-crumbs a:hover { color:var(--text); }
+  .art-crumbs span { margin:0 8px; }
+
+  .art-title { font-family:'Syncopate',sans-serif; font-size:clamp(1.5rem,4vw,2.75rem); font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--text); line-height:1.25; margin:0 0 24px; }
+  .art-meta { font-size:10px; font-weight:500; letter-spacing:.28em; text-transform:uppercase; color:var(--text-muted); }
+
+  .art-hero-img { max-width:1200px; margin:0 auto 64px; padding:0 24px; }
+  .art-hero-img img { width:100%; height:auto; }
+
+  .art-body { max-width:720px; margin:0 auto; padding:0 24px 96px; font-size:17px; font-weight:300; line-height:2; letter-spacing:.02em; color:var(--text-light); }
+  .art-body h2 { font-family:'Syncopate',sans-serif; font-size:15px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--text); line-height:1.5; margin:56px 0 20px; }
+  .art-body h3 { font-size:16px; font-weight:500; letter-spacing:.06em; color:var(--text); margin:40px 0 16px; }
+  .art-body p { margin:0 0 26px; }
+  .art-body a { color:var(--text); text-decoration:none; border-bottom:1px solid var(--border-soft); transition:border-color .25s; }
+  .art-body a:hover { border-bottom-color:var(--text); }
+  .art-body ul, .art-body ol { margin:0 0 26px; padding-left:22px; }
+  .art-body li { margin-bottom:12px; }
+  .art-body img { margin:40px 0; }
+  .art-body blockquote { margin:40px 0; padding-left:24px; border-left:1px solid var(--text); font-size:19px; color:var(--text); }
+
+  .art-foot { max-width:720px; margin:0 auto; padding:0 24px 120px; border-top:1px solid var(--border); padding-top:40px; display:flex; flex-wrap:wrap; gap:24px; justify-content:space-between; align-items:center; }
+  .art-back { font-size:10px; font-weight:500; letter-spacing:.26em; text-transform:uppercase; color:var(--text); text-decoration:none; border-bottom:1px solid var(--text); padding-bottom:3px; }
+  .art-share { display:flex; gap:20px; }
+  .art-share a { font-size:10px; font-weight:500; letter-spacing:.24em; text-transform:uppercase; color:var(--text-muted); text-decoration:none; transition:color .25s; }
+  .art-share a:hover { color:var(--text); }
+</style>
+
+<article class="art-wrap">
+  <header class="art-head">
+    <nav class="art-crumbs" aria-label="Breadcrumb">
+      <a href="{{ routes.root_url }}">{{ 'general.breadcrumb.home' | t }}</a>
+      <span>/</span>
+      <a href="{{ blog.url }}">{{ blog.title | escape }}</a>
+    </nav>
+
+    <h1 class="art-title">{{ article.title | escape }}</h1>
+
+    {%- if section.settings.show_date -%}
+      <p class="art-meta">
+        {{ 'blogs.general.posted_on' | t }}
+        <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">
+          {{ article.published_at | date: '%d.%m.%Y' }}
+        </time>
+        {%- if section.settings.show_author and article.author != blank -%}
+          — {{ article.author | escape }}
+        {%- endif -%}
+      </p>
+    {%- endif -%}
+  </header>
+
+  {%- if article.image -%}
+    <div class="art-hero-img">
+      <img
+        src="{{ article.image | image_url: width: 1600 }}"
+        srcset="{{ article.image | image_url: width: 800 }} 800w,
+                {{ article.image | image_url: width: 1200 }} 1200w,
+                {{ article.image | image_url: width: 1600 }} 1600w"
+        sizes="(min-width:1200px) 1200px, 100vw"
+        width="{{ article.image.width }}"
+        height="{{ article.image.height }}"
+        alt="{{ article.image.alt | default: article.title | escape }}"
+        loading="eager"
+        fetchpriority="high">
+    </div>
+  {%- endif -%}
+
+  <div class="art-body rte">
+    {{ article.content }}
+  </div>
+
+  <footer class="art-foot">
+    <a href="{{ blog.url }}" class="art-back">{{ 'blogs.general.back_to_blog' | t }}</a>
+
+    {%- if section.settings.show_share -%}
+      {%- assign share_url = request.origin | append: article.url | url_encode -%}
+      {%- assign share_title = article.title | url_encode -%}
+      <div class="art-share">
+        <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ share_url }}" target="_blank" rel="noopener nofollow">LinkedIn</a>
+        <a href="https://pinterest.com/pin/create/button/?url={{ share_url }}&description={{ share_title }}" target="_blank" rel="noopener nofollow">Pinterest</a>
+        <a href="mailto:?subject={{ share_title }}&body={{ share_url }}">Email</a>
+      </div>
+    {%- endif -%}
+  </footer>
+</article>
+
+{% schema %}
+{
+  "name": "Article",
+  "settings": [
+    { "type": "checkbox", "id": "show_date",   "label": "Mostrar fecha",  "default": true },
+    { "type": "checkbox", "id": "show_author", "label": "Mostrar autor",  "default": false },
+    { "type": "checkbox", "id": "show_share",  "label": "Mostrar botones de compartir", "default": true }
+  ]
+}
+{% endschema %}

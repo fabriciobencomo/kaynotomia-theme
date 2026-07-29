@@ -1,0 +1,295 @@
+/* ═══════════════════════════════════════════════════════
+   KAYNOTOMIA — checkout.css
+   Minimal luxury aesthetic for Shopify checkout (all plans)
+   ═══════════════════════════════════════════════════════ */
+
+/* ── CSS custom properties ───────────────────────────── */
+:root {
+  --color-accent:                #1a1a1a;
+  --color-button:                #1a1a1a;
+  --color-button-text:           #ffffff;
+  --color-link:                  #1a1a1a;
+  --color-background:            #ffffff;
+  --color-sidebar-background:    #F4F3F1;
+  --color-border:                #E8E6E2;
+  --font-size-base:              14px;
+  --checkout-font-family:        'Jost', 'Futura', 'Century Gothic', Arial, sans-serif;
+}
+
+/* ── Global ──────────────────────────────────────────── */
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+body,
+.Checkout,
+.checkout {
+  font-family: var(--checkout-font-family) !important;
+  -webkit-font-smoothing: antialiased;
+  background-color: #fff;
+  color: #1a1a1a;
+}
+
+/* ── Header / Logo ───────────────────────────────────── */
+.main-header,
+.header,
+[data-main-header] {
+  background: #fff;
+  border-bottom: 1px solid #E8E6E2;
+  padding: 20px 0;
+}
+
+.header__logo img,
+.logo img {
+  max-height: 32px;
+}
+
+/* ── Main content area ───────────────────────────────── */
+.main,
+.main__content,
+[role="main"] {
+  background: #fff;
+}
+
+/* ── Section / Step headers ──────────────────────────── */
+.step__header h2,
+.section__title,
+.section--title,
+.breadcrumb__item--current,
+.breadcrumb__chevron {
+  font-family: var(--checkout-font-family) !important;
+  font-weight: 400;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  font-size: 11px;
+  color: #1a1a1a;
+}
+
+/* ── Form fields ─────────────────────────────────────── */
+.field__input,
+.field__input-wrapper input,
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="password"],
+input[type="number"],
+select,
+textarea {
+  font-family: var(--checkout-font-family) !important;
+  font-size: 14px !important;
+  font-weight: 300 !important;
+  letter-spacing: .03em !important;
+  color: #1a1a1a !important;
+  background: transparent !important;
+  border: none !important;
+  border-bottom: 1px solid #E8E6E2 !important;
+  border-radius: 0 !important;
+  padding: 12px 0 !important;
+  outline: none !important;
+  transition: border-color .25s !important;
+  box-shadow: none !important;
+}
+
+.field__input:focus,
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="tel"]:focus,
+select:focus {
+  border-bottom-color: #1a1a1a !important;
+  box-shadow: none !important;
+}
+
+.field__label,
+label {
+  font-family: var(--checkout-font-family) !important;
+  font-size: 10px !important;
+  font-weight: 500 !important;
+  letter-spacing: .28em !important;
+  text-transform: uppercase !important;
+  color: #aaaaaa !important;
+}
+
+/* ── Checkbox / Radio ────────────────────────────────── */
+.radio-wrapper,
+.checkbox-wrapper {
+  border-radius: 0 !important;
+}
+
+.radio__input,
+.checkbox__input {
+  border-radius: 0 !important;
+  border-color: #E8E6E2 !important;
+}
+
+.radio__input:checked,
+.checkbox__input:checked {
+  background-color: #1a1a1a !important;
+  border-color: #1a1a1a !important;
+}
+
+/* ── Buttons ─────────────────────────────────────────── */
+.btn,
+.step__footer__continue-btn,
+button[type="submit"],
+[data-trekkie-id="complete_order_button"] {
+  font-family: var(--checkout-font-family) !important;
+  font-size: 12px !important;
+  font-weight: 400 !important;
+  letter-spacing: .28em !important;
+  text-transform: uppercase !important;
+  background: #1a1a1a !important;
+  color: #fff !important;
+  border: 1px solid #1a1a1a !important;
+  border-radius: 0 !important;
+  padding: 18px 44px !important;
+  transition: background .35s, color .35s !important;
+  cursor: pointer !important;
+}
+
+.btn:hover,
+button[type="submit"]:hover,
+[data-trekkie-id="complete_order_button"]:hover {
+  background: #fff !important;
+  color: #1a1a1a !important;
+}
+
+/* Secondary button (back link) */
+.step__footer__previous-btn,
+.previous-link,
+.link {
+  font-family: var(--checkout-font-family) !important;
+  font-size: 11px !important;
+  font-weight: 400 !important;
+  letter-spacing: .2em !important;
+  text-transform: uppercase !important;
+  color: #888880 !important;
+  text-decoration: none !important;
+}
+
+.step__footer__previous-btn:hover,
+.link:hover {
+  color: #1a1a1a !important;
+}
+
+/* ── Order Summary (sidebar) ─────────────────────────── */
+.sidebar,
+.order-summary,
+[data-order-summary] {
+  background: #F4F3F1 !important;
+  border-left: 1px solid #E8E6E2;
+}
+
+.order-summary__section {
+  border-top: 1px solid #E8E6E2 !important;
+}
+
+.product-thumbnail {
+  border-radius: 0 !important;
+  border: 1px solid #E8E6E2 !important;
+}
+
+.product-thumbnail__wrapper {
+  border-radius: 0 !important;
+}
+
+/* Product title in order summary */
+.product__description__name,
+.order-summary .product__description__name {
+  font-family: var(--checkout-font-family) !important;
+  font-size: 13px !important;
+  font-weight: 400 !important;
+  letter-spacing: .1em !important;
+  text-transform: uppercase !important;
+  color: #1a1a1a !important;
+}
+
+/* Variant / property text */
+.product__description__variant,
+.order-summary .product__description__variant {
+  font-size: 11px !important;
+  font-weight: 300 !important;
+  letter-spacing: .06em !important;
+  color: #888880 !important;
+}
+
+/* Price */
+.order-summary__emphasis,
+.total-line__price,
+.payment-due__price {
+  font-family: var(--checkout-font-family) !important;
+  font-weight: 300 !important;
+  letter-spacing: .04em !important;
+  color: #1a1a1a !important;
+}
+
+.payment-due__price {
+  font-size: 22px !important;
+  font-weight: 200 !important;
+}
+
+/* Total label */
+.payment-due-label__total,
+.total-line__name {
+  font-size: 11px !important;
+  font-weight: 500 !important;
+  letter-spacing: .22em !important;
+  text-transform: uppercase !important;
+  color: #1a1a1a !important;
+}
+
+/* Discount / promo */
+.total-line--reduction .total-line__price {
+  color: #1a1a1a !important;
+}
+
+/* ── Breadcrumb / Step indicator ─────────────────────── */
+.breadcrumb {
+  font-family: var(--checkout-font-family) !important;
+  font-size: 11px !important;
+  letter-spacing: .18em !important;
+  text-transform: uppercase !important;
+}
+
+.breadcrumb__item { color: #aaaaaa !important; }
+.breadcrumb__item--current { color: #1a1a1a !important; }
+
+/* ── Notices / Alerts ────────────────────────────────── */
+.notice--success,
+.notice {
+  background: #F4F3F1 !important;
+  border-radius: 0 !important;
+  border: 1px solid #E8E6E2 !important;
+  font-family: var(--checkout-font-family) !important;
+  font-size: 12px !important;
+  letter-spacing: .06em !important;
+  color: #1a1a1a !important;
+}
+
+/* ── Dividers ────────────────────────────────────────── */
+.section,
+.review-block,
+.content-box {
+  border-radius: 0 !important;
+  border-color: #E8E6E2 !important;
+}
+
+/* ── Typography helpers ──────────────────────────────── */
+h1, h2, h3, h4, h5 {
+  font-family: var(--checkout-font-family) !important;
+  font-weight: 300 !important;
+  letter-spacing: .1em !important;
+}
+
+/* ── New checkout extensibility overrides ────────────── */
+[style*="--color-button"] { --color-button: #1a1a1a !important; }
+[class*="Button"] {
+  border-radius: 0 !important;
+  font-family: var(--checkout-font-family) !important;
+  font-size: 12px !important;
+  letter-spacing: .28em !important;
+  text-transform: uppercase !important;
+}
+[class*="TextField"] input {
+  border-radius: 0 !important;
+  font-family: var(--checkout-font-family) !important;
+}

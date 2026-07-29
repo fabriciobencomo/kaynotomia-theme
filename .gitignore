@@ -1,0 +1,23 @@
+# Sistema
+.DS_Store
+Thumbs.db
+*.log
+
+# Shopify CLI
+.shopify/
+.env
+.env.*
+
+# Dependencias (solo si se añade tooling de build)
+node_modules/
+
+# Binarios pesados: NO versionar. Git conserva los blobs en el historial
+# para siempre, aunque después se borren.
+*.gif
+assets/*.psd
+assets/*.ai
+assets/*.sketch
+
+# IMPORTANTE — no ignorar nunca estos:
+#   config/settings_data.json   → Shopify lo sincroniza y es parte del tema
+#   templates/*.json            → contienen el contenido del personalizador

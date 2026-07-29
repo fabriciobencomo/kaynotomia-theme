@@ -1,0 +1,108 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "Luxwave — Kaynotomia",
+    "theme_version": "1.1.0",
+    "theme_author": "Kaynotomia",
+    "theme_documentation_url": "https://kaynotomia.com",
+    "theme_support_url": "https://kaynotomia.com/pages/contact"
+  },
+  {
+    "name": "General",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "favicon",
+        "label": "Favicon",
+        "info": "PNG cuadrado de 512×512 px. El tema lo referenciaba pero no existía el ajuste, así que nunca se mostraba."
+      },
+      {
+        "type": "url",
+        "id": "featured_collection_url",
+        "label": "URL de la colección principal",
+        "info": "La usan el menú y el pie. Antes apuntaban al ancla /#collections, que no es una URL rastreable. Apúntalo a /collections/bolsos-impresos-3d o a /collections/all."
+      }
+    ]
+  },
+  {
+    "name": "Negocio y SEO",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Datos del negocio",
+        "info": "Alimentan el JSON-LD de Organization. Deben coincidir CARÁCTER A CARÁCTER con la ficha de Google Business y con el pie de página."
+      },
+      {
+        "type": "text",
+        "id": "business_street",
+        "label": "Calle y número"
+      },
+      {
+        "type": "text",
+        "id": "business_postal_code",
+        "label": "Código postal"
+      },
+      {
+        "type": "text",
+        "id": "business_city",
+        "label": "Ciudad",
+        "default": "Madrid"
+      },
+      {
+        "type": "text",
+        "id": "business_country_code",
+        "label": "Código de país (ISO 2 letras)",
+        "default": "ES"
+      },
+      {
+        "type": "header",
+        "content": "Envíos y devoluciones",
+        "info": "Se publican en el JSON-LD del producto y generan las anotaciones de envío y devolución en los resultados de Google."
+      },
+      {
+        "type": "number",
+        "id": "shipping_rate",
+        "label": "Coste de envío estándar",
+        "default": 0
+      },
+      {
+        "type": "number",
+        "id": "transit_days_min",
+        "label": "Días de tránsito (mínimo)",
+        "default": 5
+      },
+      {
+        "type": "number",
+        "id": "transit_days_max",
+        "label": "Días de tránsito (máximo)",
+        "default": 7
+      },
+      {
+        "type": "number",
+        "id": "return_days",
+        "label": "Días para devolver",
+        "default": 14
+      },
+      {
+        "type": "text",
+        "id": "product_material",
+        "label": "Materiales del producto",
+        "default": "TPU 95A, terciopelo, herrajes metálicos"
+      }
+    ]
+  },
+  {
+    "name": "Redes sociales",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Se publican como sameAs en el JSON-LD. Es lo que permite a Google conectar la web con los perfiles y construir la entidad de marca."
+      },
+      { "type": "url", "id": "social_instagram", "label": "Instagram" },
+      { "type": "url", "id": "social_tiktok", "label": "TikTok" },
+      { "type": "url", "id": "social_pinterest", "label": "Pinterest" },
+      { "type": "url", "id": "social_youtube", "label": "YouTube" },
+      { "type": "url", "id": "social_linkedin", "label": "LinkedIn" }
+    ]
+  }
+]

@@ -1,0 +1,367 @@
+{% comment %} sections/footer.liquid {% endcomment %}
+
+{% assign current_language_prefix = localization.language.iso_code | split: '-' | first %}
+
+{%- comment -%} FIX SEO-05 — El menú apuntaba al ancla /#collections, que no es una URL rastreable.
+   Ahora usa la URL de colección definida en Personalizar → Configuración del tema → General.
+   Si está vacía, mantiene el comportamiento anterior para no romper nada. {%- endcomment -%}
+{%- if settings.featured_collection_url != blank -%}
+  {%- assign collections_href = settings.featured_collection_url -%}
+{%- else -%}
+  {%- assign collections_href = routes.root_url | append: '#collections' -%}
+{%- endif -%}
+
+
+{% comment %}
+  Producto seleccionado desde el editor del tema.
+  Shopify genera automáticamente la URL correcta para el idioma actual.
+{% endcomment %}
+
+{% assign customize_product = section.settings.customize_product %}
+
+{% if customize_product != blank %}
+  {% assign customize_url = customize_product.url %}
+{% else %}
+  {% assign customize_url = routes.root_url %}
+{% endif %}
+
+<footer
+  class="py-16 lg:py-24"
+  style="background:var(--inv-bg);color:var(--inv-text);"
+>
+  <div class="max-w-screen-2xl mx-auto px-6 lg:px-14">
+
+    <div class="grid md:grid-cols-3 gap-12 lg:gap-20 mb-16">
+
+      <!-- MARCA -->
+      <div>
+
+        <h3
+          class="font-syncopate font-bold tracking-widest mb-6"
+          style="font-size:12px;color:rgba(255,255,255,1);"
+        >
+          {{ shop.name | upcase }}
+        </h3>
+
+        <p
+          style="
+            font-size:14px;
+            font-weight:300;
+            color:rgba(255,255,255,.55);
+            line-height:2.1;
+            letter-spacing:.03em;
+          "
+        >
+          {% if current_language_prefix == 'es' %}
+
+            {% if section.settings.tagline_es != blank %}
+              {{ section.settings.tagline_es | newline_to_br }}
+            {% else %}
+              Innovación en diseño.<br>
+              Arquitectura escultural.<br>
+              Personalización sin límites.
+            {% endif %}
+
+          {% else %}
+
+            {% if section.settings.tagline_en != blank %}
+              {{ section.settings.tagline_en | newline_to_br }}
+            {% else %}
+              Innovation through design.<br>
+              Sculptural architecture.<br>
+              Limitless customization.
+            {% endif %}
+
+          {% endif %}
+        </p>
+
+      </div>
+
+      <!-- NAVEGACIÓN -->
+      <div>
+
+        <h4
+          class="footer-label mb-6"
+          style="color:rgba(255,255,255,.4);"
+        >
+          {% if current_language_prefix == 'es' %}
+            Navegación
+          {% else %}
+            Navigation
+          {% endif %}
+        </h4>
+
+        <ul class="space-y-4">
+
+          <!-- COLECCIONES -->
+          <li>
+            <a
+              href="{{ collections_href }}"
+              style="
+                font-size:14px;
+                font-weight:300;
+                color:rgba(255,255,255,.75);
+                text-decoration:none;
+                letter-spacing:.04em;
+                transition:opacity .25s;
+              "
+              onmouseover="this.style.opacity='.45'"
+              onmouseout="this.style.opacity='1'"
+            >
+              {% if current_language_prefix == 'es' %}
+                Colecciones
+              {% else %}
+                Collections
+              {% endif %}
+            </a>
+          </li>
+
+          <!-- PERSONALIZAR -->
+          <li>
+            <a
+              href="{{ customize_url }}"
+              style="
+                font-size:14px;
+                font-weight:300;
+                color:rgba(255,255,255,.75);
+                text-decoration:none;
+                letter-spacing:.04em;
+                transition:opacity .25s;
+              "
+              onmouseover="this.style.opacity='.45'"
+              onmouseout="this.style.opacity='1'"
+            >
+              {% if current_language_prefix == 'es' %}
+                Personalizar
+              {% else %}
+                Customize
+              {% endif %}
+            </a>
+          </li>
+
+          <!-- NOSOTROS -->
+          <li>
+            <a
+              href="{{ routes.root_url }}pages/about"
+              style="
+                font-size:14px;
+                font-weight:300;
+                color:rgba(255,255,255,.75);
+                text-decoration:none;
+                letter-spacing:.04em;
+                transition:opacity .25s;
+              "
+              onmouseover="this.style.opacity='.45'"
+              onmouseout="this.style.opacity='1'"
+            >
+              {% if current_language_prefix == 'es' %}
+                Nosotros
+              {% else %}
+                About us
+              {% endif %}
+            </a>
+          </li>
+
+          <!-- CONTACTO -->
+          <li>
+            <a
+              href="{{ routes.root_url }}pages/contact"
+              style="
+                font-size:14px;
+                font-weight:300;
+                color:rgba(255,255,255,.75);
+                text-decoration:none;
+                letter-spacing:.04em;
+                transition:opacity .25s;
+              "
+              onmouseover="this.style.opacity='.45'"
+              onmouseout="this.style.opacity='1'"
+            >
+              {% if current_language_prefix == 'es' %}
+                Contacto
+              {% else %}
+                Contact
+              {% endif %}
+            </a>
+          </li>
+
+        </ul>
+
+      </div>
+
+      <!-- LEGAL -->
+      <div>
+
+        <h4
+          class="footer-label mb-6"
+          style="color:rgba(255,255,255,.4);"
+        >
+          Legal
+        </h4>
+
+        {% if section.settings.legal_menu != blank %}
+
+          <ul class="space-y-4">
+
+            {% for link in section.settings.legal_menu.links %}
+
+              {% assign legal_link_title = link.title %}
+              {% assign legal_link_url = link.url %}
+
+              {% comment %}
+                Genera las URLs de las políticas usando la raíz
+                correspondiente al idioma actual.
+              {% endcomment %}
+
+              {% if link.url contains '/policies/' %}
+
+                {% assign policy_slug = link.url | split: '/policies/' | last %}
+                {% assign legal_link_url = routes.root_url
+                  | append: 'policies/'
+                  | append: policy_slug
+                %}
+
+              {% endif %}
+
+              {% if current_language_prefix == 'es' %}
+
+                {% if link.url contains '/policies/privacy-policy' %}
+                  {% assign legal_link_title = 'Política de privacidad' %}
+
+                {% elsif link.url contains '/policies/refund-policy' %}
+                  {% assign legal_link_title = 'Devoluciones y reembolsos' %}
+
+                {% elsif link.url contains '/policies/terms-of-service' %}
+                  {% assign legal_link_title = 'Términos del servicio' %}
+
+                {% elsif link.url contains '/policies/contact-information' %}
+                  {% assign legal_link_title = 'Información de contacto' %}
+
+                {% elsif link.url contains '/policies/shipping-policy' %}
+                  {% assign legal_link_title = 'Política de envíos' %}
+
+                {% elsif link.title == 'Your Privacy Choices' %}
+                  {% assign legal_link_title = 'Opciones de privacidad' %}
+
+                {% elsif link.title == 'Search' or link.title == 'Búsqueda' %}
+                  {% assign legal_link_title = 'Búsqueda' %}
+
+                {% endif %}
+
+              {% endif %}
+
+              <li>
+                <a
+                  href="{{ legal_link_url }}"
+                  style="
+                    font-size:14px;
+                    font-weight:300;
+                    color:rgba(255,255,255,.75);
+                    text-decoration:none;
+                    letter-spacing:.04em;
+                    transition:opacity .25s;
+                  "
+                  onmouseover="this.style.opacity='.45'"
+                  onmouseout="this.style.opacity='1'"
+                >
+                  {{ legal_link_title }}
+                </a>
+              </li>
+
+            {% endfor %}
+
+          </ul>
+
+        {% else %}
+
+          <p
+            style="
+              font-size:13px;
+              font-weight:300;
+              color:rgba(255,255,255,.45);
+              line-height:1.8;
+            "
+          >
+            {% if current_language_prefix == 'es' %}
+              Selecciona el menú inferior desde el editor del tema.
+            {% else %}
+              Select the footer menu from the theme editor.
+            {% endif %}
+          </p>
+
+        {% endif %}
+
+      </div>
+
+    </div>
+
+    <!-- COPYRIGHT -->
+    <div
+      class="pt-8 text-center"
+      style="border-top:1px solid rgba(255,255,255,.1);"
+    >
+      <p
+        class="footer-label"
+        style="color:rgba(255,255,255,.3);"
+      >
+        © {{ 'now' | date: '%Y' }}
+        {{ shop.name | upcase }}
+        —
+        {{ section.settings.copyright_suffix | default: 'Design Beyond Convention' }}
+      </p>
+    </div>
+
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "Footer",
+  "settings": [
+    {
+      "type": "textarea",
+      "id": "tagline_en",
+      "label": "Brand tagline — English",
+      "default": "Innovation through design.\nSculptural architecture.\nLimitless customization."
+    },
+    {
+      "type": "textarea",
+      "id": "tagline_es",
+      "label": "Brand tagline — Spanish",
+      "default": "Innovación en diseño.\nArquitectura escultural.\nPersonalización sin límites."
+    },
+    {
+      "type": "product",
+      "id": "customize_product",
+      "label": "Producto para Personalizar / Customize"
+    },
+    {
+      "type": "link_list",
+      "id": "legal_menu",
+      "label": "Legal menu",
+      "default": "footer"
+    },
+    {
+      "type": "url",
+      "id": "instagram",
+      "label": "Instagram URL"
+    },
+    {
+      "type": "text",
+      "id": "email",
+      "label": "Email address"
+    },
+    {
+      "type": "url",
+      "id": "whatsapp",
+      "label": "WhatsApp URL"
+    },
+    {
+      "type": "text",
+      "id": "copyright_suffix",
+      "label": "Copyright suffix",
+      "default": "Design Beyond Convention"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,55 @@
+{% comment %} sections/unboxing.liquid
+  Upload frame_0001.webp…frame_0121.webp to Admin → Content → Files
+  Paste the CDN base URL in section settings (e.g. https://cdn.shopify.com/s/files/1/XXXX/files/)
+{% endcomment %}
+<div id="unboxScene">
+  <div id="unboxSticky">
+    <canvas id="unboxCanvas" data-cdn="{{ section.settings.frame_cdn_base }}"></canvas>
+    <div id="unboxVig"></div>
+    <div id="unboxHeader">
+      <span class="ub-header-eye">The Experience</span>
+      <span class="ub-header-title">NIMBUS</span>
+    </div>
+    <div id="unboxCue">
+      <span>Scroll to discover</span>
+      <svg width="12" height="18" viewBox="0 0 12 18" fill="none">
+        <path d="M6 1v16M1 11l5 5 5-5" stroke="rgba(232,230,226,.3)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div id="unboxProgBar"><div id="unboxProgFill"></div></div>
+    <div class="ub-panel L" id="ubp1">
+      <span class="ub-rule"></span><span class="ub-eye">01 — Packaging</span>
+      <h3 class="ub-title">Crafted<br>to impress</h3>
+      <p class="ub-body">A rigid matte-black box, debossed with the KAYNOTOMIA mark. First impressions are part of the design.</p>
+    </div>
+    <div class="ub-panel R" id="ubp2">
+      <span class="ub-rule"></span><span class="ub-eye">02 — The reveal</span>
+      <h3 class="ub-title">Slow lift.<br>First look.</h3>
+      <p class="ub-body">Magnetic closure. Every millimetre of resistance intentional — anticipation is part of the experience.</p>
+    </div>
+    <div class="ub-panel L" id="ubp3">
+      <span class="ub-rule"></span><span class="ub-eye">03 — The piece</span>
+      <h3 class="ub-title">Nimbus<br>3D printed</h3>
+      <p class="ub-body">Case fabricated layer by layer. Cloud-inspired silhouette. Rigid structure, featherlight presence.</p>
+    </div>
+    <div class="ub-panel R" id="ubp4">
+      <span class="ub-rule"></span><span class="ub-eye">04 — Inside</span>
+      <h3 class="ub-title">Everything<br>included</h3>
+      <p class="ub-body">Handmade velvet sack. Interchangeable templates. Polished hardware. Branded keyring. Custom foam inlay.</p>
+    </div>
+    <div class="ub-panel C" id="ubp5">
+      <span class="ub-rule"></span><span class="ub-eye">KAYNOTOMIA</span>
+      <h3 class="ub-title" style="font-size:clamp(1.4rem,2.8vw,2.4rem);">Not just a bag.<br>A complete world.</h3>
+      <p class="ub-body" style="max-width:420px;margin:0 auto;">From the moment you receive it to the moment you carry it — every touch point designed with intention.</p>
+    </div>
+  </div>
+</div>
+{% schema %}
+{
+  "name":"Unboxing Experience",
+  "settings":[
+    {"type":"text","id":"frame_cdn_base","label":"Frame CDN base URL","info":"Admin → Content → Files → upload frame_0001.webp…frame_0121.webp → paste base URL here (e.g. https://cdn.shopify.com/s/files/1/XXXX/files/)"}
+  ],
+  "presets":[{"name":"Unboxing Experience"}]
+}
+{% endschema %}

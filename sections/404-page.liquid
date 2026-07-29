@@ -1,0 +1,277 @@
+<div 
+  class="page-404-custom"
+  style="
+    min-height:{{ section.settings.page_height }}vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:40px;
+    position:relative;
+    overflow:hidden;
+    background-color:#000;
+
+    {% if section.settings.bg_image != blank %}
+      background-image:url('{{ section.settings.bg_image | image_url: width: 2400 }}');
+      background-size:{{ section.settings.bg_zoom }}%;
+      background-position:center;
+      background-repeat:no-repeat;
+    {% endif %}
+  "
+>
+
+  <!-- Oscuridad general del fondo -->
+  <div 
+    style="
+      position:absolute;
+      inset:0;
+      background:rgba(0,0,0,{{ section.settings.overlay_opacity | divided_by: 100.0 }});
+      z-index:1;
+      pointer-events:none;
+    "
+  ></div>
+
+  <!-- Degradado superior o inferior -->
+  {% assign gradient_alpha = section.settings.gradient_opacity | divided_by: 100.0 %}
+
+  {% if section.settings.gradient_position != 'none' %}
+    <div 
+      style="
+        position:absolute;
+        inset:0;
+        z-index:1;
+        pointer-events:none;
+
+        {% if section.settings.gradient_position == 'top' %}
+          background:linear-gradient(
+            to bottom,
+            {{ section.settings.gradient_color | color_modify: 'alpha', gradient_alpha }} 0%,
+            {{ section.settings.gradient_color | color_modify: 'alpha', 0 }} {{ section.settings.gradient_size }}%
+          );
+        {% elsif section.settings.gradient_position == 'bottom' %}
+          background:linear-gradient(
+            to top,
+            {{ section.settings.gradient_color | color_modify: 'alpha', gradient_alpha }} 0%,
+            {{ section.settings.gradient_color | color_modify: 'alpha', 0 }} {{ section.settings.gradient_size }}%
+          );
+        {% elsif section.settings.gradient_position == 'both' %}
+          background:
+            linear-gradient(
+              to bottom,
+              {{ section.settings.gradient_color | color_modify: 'alpha', gradient_alpha }} 0%,
+              {{ section.settings.gradient_color | color_modify: 'alpha', 0 }} {{ section.settings.gradient_size }}%
+            ),
+            linear-gradient(
+              to top,
+              {{ section.settings.gradient_color | color_modify: 'alpha', gradient_alpha }} 0%,
+              {{ section.settings.gradient_color | color_modify: 'alpha', 0 }} {{ section.settings.gradient_size }}%
+            );
+        {% endif %}
+      "
+    ></div>
+  {% endif %}
+
+  <p style="
+    font-size:10px;
+    letter-spacing:.4em;
+    text-transform:uppercase;
+    color:#b8b8b8;
+    margin-bottom:16px;
+    position:relative;
+    z-index:2;
+    font-weight:300;
+  ">
+    {{ section.settings.error_label | default: '404' }}
+  </p>
+
+  <h1 style="
+    font-family:'Syncopate',sans-serif;
+    font-size:clamp(2rem, {{ section.settings.title_size }}vw, 7rem);
+    font-weight:{{ section.settings.title_weight }};
+    color:#fff;
+    margin-bottom:24px;
+    position:relative;
+    z-index:2;
+    line-height:1.05;
+    letter-spacing:.04em;
+  ">
+    {{ section.settings.title_text | default: 'Página no encontrada' | newline_to_br }}
+  </h1>
+
+  {% assign button_href = section.settings.button_url | default: routes.root_url %}
+
+  <a 
+    href="{{ button_href }}" 
+    class="btn-404-outline"
+  >
+    {{ section.settings.button_text | default: 'Volver al inicio' }}
+  </a>
+</div>
+
+<style>
+  .page-404-custom .btn-404-outline{
+    padding:14px 42px;
+    position:relative;
+    z-index:2;
+    background:transparent !important;
+    color:#fff !important;
+    border:1px solid rgba(255,255,255,.85);
+    border-radius:999px;
+    text-decoration:none;
+    display:inline-block;
+    letter-spacing:.25em;
+    text-transform:uppercase;
+    font-size:12px;
+    font-weight:300;
+    line-height:1;
+    transition:all .3s ease;
+  }
+
+  .page-404-custom .btn-404-outline:hover{
+    background:rgba(255,255,255,.08) !important;
+    border-color:#fff;
+    color:#fff !important;
+    transform:translateY(-1px);
+  }
+</style>
+
+{% schema %}
+{
+  "name": "404",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "bg_image",
+      "label": "Imagen de fondo"
+    },
+    {
+      "type": "text",
+      "id": "error_label",
+      "label": "Texto pequeño superior",
+      "default": "404"
+    },
+    {
+      "type": "textarea",
+      "id": "title_text",
+      "label": "Título principal",
+      "default": "Página no encontrada"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Texto del botón",
+      "default": "Volver al inicio"
+    },
+    {
+      "type": "url",
+      "id": "button_url",
+      "label": "Link del botón"
+    },
+    {
+      "type": "range",
+      "id": "page_height",
+      "label": "Altura de la página",
+      "min": 40,
+      "max": 120,
+      "step": 5,
+      "unit": "vh",
+      "default": 70
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "label": "Tamaño del título",
+      "min": 3,
+      "max": 10,
+      "step": 1,
+      "unit": "vw",
+      "default": 5
+    },
+    {
+      "type": "range",
+      "id": "title_weight",
+      "label": "Grosor del título",
+      "min": 100,
+      "max": 700,
+      "step": 100,
+      "default": 200
+    },
+    {
+      "type": "range",
+      "id": "bg_zoom",
+      "label": "Zoom del fondo",
+      "min": 100,
+      "max": 200,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Oscuridad general del fondo",
+      "min": 0,
+      "max": 90,
+      "step": 5,
+      "unit": "%",
+      "default": 40
+    },
+    {
+      "type": "select",
+      "id": "gradient_position",
+      "label": "Posición del degradado",
+      "default": "bottom",
+      "options": [
+        {
+          "value": "none",
+          "label": "Sin degradado"
+        },
+        {
+          "value": "top",
+          "label": "Desde arriba"
+        },
+        {
+          "value": "bottom",
+          "label": "Desde abajo"
+        },
+        {
+          "value": "both",
+          "label": "Arriba y abajo"
+        }
+      ]
+    },
+    {
+      "type": "color",
+      "id": "gradient_color",
+      "label": "Color del degradado",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "gradient_opacity",
+      "label": "Intensidad del degradado",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 70
+    },
+    {
+      "type": "range",
+      "id": "gradient_size",
+      "label": "Tamaño del degradado",
+      "min": 10,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 55
+    }
+  ],
+  "presets": [
+    {
+      "name": "404"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,163 @@
+{% comment %}
+  sections/main-collection.liquid
+  NUEVO.
+
+  CAUSA RAÍZ DEL 404: el tema no incluía templates/collection.json ni
+  ninguna sección de colección. Shopify devuelve 404 en /collections/<handle>
+  cuando el tema no tiene plantilla, aunque la colección exista y esté
+  publicada en el canal Tienda online. Por eso /collections/nimbus y
+  /collections/frontpage daban 404 estando listadas en /collections.
+
+  Los textos de interfaz salen de locales/*.json ({{ '...' | t }}).
+  El título y la descripción de la colección salen de los datos de Shopify
+  y se traducen desde Translate & Adapt.
+{% endcomment %}
+
+<style>
+  .coll-hero { padding-top:72px; border-bottom:1px solid var(--border); }
+  .coll-hero-inner { max-width:1440px; margin:0 auto; padding:80px 24px 64px; }
+  @media(min-width:1024px){ .coll-hero-inner { padding:100px 56px 80px; } }
+
+  .coll-label { display:block; font-size:10px; font-weight:500; letter-spacing:.34em; text-transform:uppercase; color:var(--text-muted); margin-bottom:24px; }
+  .coll-title { font-family:'Syncopate',sans-serif; font-size:clamp(1.75rem,5vw,4rem); font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--text); line-height:1.05; margin:0 0 28px; }
+  .coll-desc { font-size:16px; font-weight:300; color:var(--text-light); line-height:2; letter-spacing:.03em; max-width:640px; }
+  .coll-desc p { margin:0 0 18px; }
+  .coll-count { font-size:10px; font-weight:500; letter-spacing:.28em; text-transform:uppercase; color:var(--text-muted); margin-top:36px; }
+
+  .coll-grid { max-width:1440px; margin:0 auto; padding:64px 24px 96px; display:grid; grid-template-columns:1fr; gap:56px 32px; }
+  @media(min-width:640px){ .coll-grid { grid-template-columns:repeat(2,1fr); padding:72px 40px 112px; } }
+  @media(min-width:1024px){ .coll-grid { grid-template-columns:repeat(3,1fr); padding:80px 56px 128px; gap:72px 40px; } }
+
+  .coll-card { text-decoration:none; display:block; }
+  .coll-card-media { position:relative; overflow:hidden; background:var(--bg-subtle); aspect-ratio:3/4; }
+  .coll-card-media img { width:100%; height:100%; object-fit:cover; transition:transform .8s cubic-bezier(.4,0,.2,1); }
+  .coll-card:hover .coll-card-media img { transform:scale(1.04); }
+  .coll-card-badge { position:absolute; top:14px; left:14px; font-size:9px; font-weight:500; letter-spacing:.26em; text-transform:uppercase; background:var(--bg); color:var(--text); padding:7px 12px; }
+  .coll-card-body { padding-top:20px; display:flex; justify-content:space-between; align-items:baseline; gap:16px; }
+  .coll-card-title { font-family:'Syncopate',sans-serif; font-size:12px; font-weight:400; letter-spacing:.2em; text-transform:uppercase; color:var(--text); margin:0; }
+  .coll-card-price { font-size:13px; font-weight:300; letter-spacing:.04em; color:var(--text-light); white-space:nowrap; }
+  .coll-card-sold { font-size:10px; letter-spacing:.24em; text-transform:uppercase; color:var(--text-muted); }
+
+  .coll-empty { max-width:1440px; margin:0 auto; padding:120px 24px; text-align:center; font-size:15px; font-weight:300; color:var(--text-light); letter-spacing:.03em; }
+
+  .coll-pagination { max-width:1440px; margin:0 auto; padding:0 24px 96px; display:flex; gap:28px; justify-content:center; }
+  @media(min-width:1024px){ .coll-pagination { padding:0 56px 112px; } }
+  .coll-pagination a, .coll-pagination span { font-size:11px; font-weight:500; letter-spacing:.24em; text-transform:uppercase; text-decoration:none; color:var(--text-muted); }
+  .coll-pagination a:hover { color:var(--text); }
+  .coll-pagination .current { color:var(--text); }
+</style>
+
+<div class="coll-hero">
+  <div class="coll-hero-inner">
+    {%- if section.settings.show_eyebrow -%}
+      <span class="coll-label">{{ 'general.breadcrumb.collections' | t }}</span>
+    {%- endif -%}
+
+    <h1 class="coll-title">{{ collection.title | escape }}</h1>
+
+    {%- if collection.description != blank -%}
+      <div class="coll-desc">{{ collection.description }}</div>
+    {%- endif -%}
+
+    {%- if section.settings.show_count and collection.products_count > 0 -%}
+      <p class="coll-count">
+        {{ 'collections.general.product_count' | t: count: collection.products_count }}
+      </p>
+    {%- endif -%}
+  </div>
+</div>
+
+{%- paginate collection.products by section.settings.products_per_page -%}
+  {%- if collection.products.size > 0 -%}
+    <div class="coll-grid">
+      {%- for product in collection.products -%}
+        <a href="{{ product.url }}" class="coll-card">
+          <div class="coll-card-media">
+            {%- if product.featured_image -%}
+              <img
+                src="{{ product.featured_image | image_url: width: 800 }}"
+                srcset="{{ product.featured_image | image_url: width: 400 }} 400w,
+                        {{ product.featured_image | image_url: width: 800 }} 800w,
+                        {{ product.featured_image | image_url: width: 1200 }} 1200w"
+                sizes="(min-width:1024px) 33vw, (min-width:640px) 50vw, 100vw"
+                width="{{ product.featured_image.width }}"
+                height="{{ product.featured_image.height }}"
+                alt="{{ product.featured_image.alt | default: product.title | escape }}"
+                loading="{% if forloop.index <= 3 %}eager{% else %}lazy{% endif %}"
+                fetchpriority="{% if forloop.first %}high{% else %}auto{% endif %}">
+            {%- endif -%}
+
+            {%- if product.has_only_default_variant == false -%}
+              <span class="coll-card-badge">{{ 'products.product.customizable' | t }}</span>
+            {%- endif -%}
+          </div>
+
+          <div class="coll-card-body">
+            <h2 class="coll-card-title">{{ product.title | escape }}</h2>
+            {%- if product.available -%}
+              <span class="coll-card-price">
+                {%- if product.price_varies -%}
+                  {{ 'products.product.from_price' | t }} {{ product.price_min | money }}
+                {%- else -%}
+                  {{ product.price | money }}
+                {%- endif -%}
+              </span>
+            {%- else -%}
+              <span class="coll-card-sold">{{ 'products.product.sold_out' | t }}</span>
+            {%- endif -%}
+          </div>
+        </a>
+      {%- endfor -%}
+    </div>
+
+    {%- if paginate.pages > 1 -%}
+      <nav class="coll-pagination" role="navigation">
+        {%- if paginate.previous -%}
+          <a href="{{ paginate.previous.url }}">{{ 'general.pagination.previous' | t }}</a>
+        {%- endif -%}
+        {%- for part in paginate.parts -%}
+          {%- if part.is_link -%}
+            <a href="{{ part.url }}">{{ part.title }}</a>
+          {%- else -%}
+            <span class="current">{{ part.title }}</span>
+          {%- endif -%}
+        {%- endfor -%}
+        {%- if paginate.next -%}
+          <a href="{{ paginate.next.url }}">{{ 'general.pagination.next' | t }}</a>
+        {%- endif -%}
+      </nav>
+    {%- endif -%}
+
+  {%- else -%}
+    <p class="coll-empty">{{ 'collections.general.no_products' | t }}</p>
+  {%- endif -%}
+{%- endpaginate -%}
+
+{% schema %}
+{
+  "name": "Collection",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_eyebrow",
+      "label": "Mostrar etiqueta superior",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_count",
+      "label": "Mostrar número de productos",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "label": "Productos por página",
+      "min": 6,
+      "max": 48,
+      "step": 6,
+      "default": 24
+    }
+  ]
+}
+{% endschema %}

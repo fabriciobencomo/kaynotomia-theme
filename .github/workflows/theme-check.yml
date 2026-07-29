@@ -1,0 +1,67 @@
+name: Theme Check
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  lint:
+    name: Lint del tema
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Instalar Shopify CLI
+        run: npm install -g @shopify/cli
+
+      - name: Theme Check
+        run: shopify theme check --fail-level error
+
+  json:
+    name: Validar JSON
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Sintaxis de templates, config y locales
+        run: |
+          set -e
+          for f in templates/*.json config/*.json locales/*.json; do
+            python3 -m json.tool "$f" > /dev/null && echo "OK  $f"
+          done
+
+      - name: Paridad de claves entre idiomas
+        run: |
+          python3 - << 'PY'
+          import json, sys, glob
+          def keys(d, p=''):
+              s = set()
+              for k, v in d.items():
+                  s.add(p + k)
+                  if isinstance(v, dict):
+                      s |= keys(v, p + k + '.')
+              return s
+          base = 'locales/en.default.json'
+          ref = keys(json.load(open(base, encoding='utf-8')))
+          fail = False
+          for f in glob.glob('locales/*.json'):
+              if f == base:
+                  continue
+              cur = keys(json.load(open(f, encoding='utf-8')))
+              missing, extra = ref - cur, cur - ref
+              if missing or extra:
+                  fail = True
+                  print(f"::error file={f}::faltan {sorted(missing)} | sobran {sorted(extra)}")
+              else:
+                  print(f"OK  {f} — {len(cur)} claves")
+          sys.exit(1 if fail else 0)
+          PY

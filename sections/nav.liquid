@@ -1,0 +1,973 @@
+{% comment %} sections/nav.liquid {% endcomment %}
+
+{% assign current_language_prefix = localization.language.iso_code | split: '-' | first %}
+
+{%- comment -%} FIX SEO-05 — El menú apuntaba al ancla /#collections, que no es una URL rastreable.
+   Ahora usa la URL de colección definida en Personalizar → Configuración del tema → General.
+   Si está vacía, mantiene el comportamiento anterior para no romper nada. {%- endcomment -%}
+{%- if settings.featured_collection_url != blank -%}
+  {%- assign collections_href = settings.featured_collection_url -%}
+{%- else -%}
+  {%- assign collections_href = routes.root_url | append: '#collections' -%}
+{%- endif -%}
+
+
+<nav
+  id="mainNav"
+  style="
+    --symbol-logo-width-desktop:{{ section.settings.logo_width_desktop }}px;
+    --symbol-logo-width-mobile:{{ section.settings.logo_width_mobile }}px;
+    --symbol-logo-gap:{{ section.settings.logo_menu_gap }}px;
+  "
+>
+  <div class="max-w-screen-2xl mx-auto px-6 lg:px-14">
+    <div class="flex items-center justify-between" style="height:72px;">
+
+      <!-- NAVEGACIÓN IZQUIERDA - ESCRITORIO -->
+      <div class="hidden lg:flex items-center nav-left-desktop">
+
+        <!-- LOGO PNG ANTES DE COLLECTION -->
+        {% if section.settings.logo_black != blank or section.settings.logo_white != blank %}
+          <a
+            href="{{ routes.root_url }}"
+            class="nav-symbol-link nav-symbol-link--desktop"
+            aria-label="{{ shop.name | escape }}"
+          >
+            {% if section.settings.logo_black != blank %}
+              <img
+                src="{{ section.settings.logo_black | image_url: width: 500 }}"
+                alt="{{ shop.name | escape }}"
+                class="nav-symbol-image nav-symbol-image--black{% if section.settings.logo_white == blank %} nav-symbol-image--only{% endif %}"
+                width="{{ section.settings.logo_black.width }}"
+                height="{{ section.settings.logo_black.height }}"
+                loading="eager"
+              >
+            {% endif %}
+
+            {% if section.settings.logo_white != blank %}
+              <img
+                src="{{ section.settings.logo_white | image_url: width: 500 }}"
+                alt="{{ shop.name | escape }}"
+                class="nav-symbol-image nav-symbol-image--white{% if section.settings.logo_black == blank %} nav-symbol-image--only{% endif %}"
+                width="{{ section.settings.logo_white.width }}"
+                height="{{ section.settings.logo_white.height }}"
+                loading="eager"
+              >
+            {% endif %}
+          </a>
+        {% endif %}
+
+        <div class="nav-left-links">
+          <a href="{{ collections_href }}" class="nav-link">
+            {% if current_language_prefix == 'es' %}
+              Colección
+            {% else %}
+              Collection
+            {% endif %}
+          </a>
+
+          <a href="{{ all_products['nimbus'].url }}" class="nav-link">
+            {% if current_language_prefix == 'es' %}
+              Personalizar
+            {% else %}
+              Customize
+            {% endif %}
+          </a>
+        </div>
+
+      </div>
+
+      <!-- LOGO CENTRAL - ESCRITORIO -->
+      <a
+        href="{{ routes.root_url }}"
+        class="nav-logo font-syncopate font-bold tracking-widest hover:opacity-60 transition-opacity absolute left-1/2 -translate-x-1/2 hidden lg:block"
+      >
+        {{ shop.name | upcase }}
+      </a>
+
+      <!-- NAVEGACIÓN DERECHA - ESCRITORIO -->
+      <div class="hidden lg:flex items-center gap-10">
+
+        <a href="{{ pages['about'].url }}" class="nav-link">
+          {% if current_language_prefix == 'es' %}
+            Nosotros
+          {% else %}
+            About us
+          {% endif %}
+        </a>
+
+        <a href="{{ pages['contact'].url }}" class="nav-link">
+          {% if current_language_prefix == 'es' %}
+            Contacto
+          {% else %}
+            Contact
+          {% endif %}
+        </a>
+
+        <div class="flex items-center gap-5 ml-4">
+
+          <!-- SELECTOR DE IDIOMA - ESCRITORIO -->
+          {% if localization.available_languages.size > 1 %}
+            <div
+              class="language-switcher"
+              role="navigation"
+              aria-label="Selector de idioma"
+            >
+
+              {% for language in localization.available_languages %}
+
+                {% assign language_prefix = language.iso_code | split: '-' | first %}
+                {% assign language_short_code = language_prefix | upcase %}
+
+                {% capture language_flag %}
+                  {% case language_prefix %}
+
+                    {% when 'es' %}
+                      <svg
+                        viewBox="0 0 30 20"
+                        xmlns="http://www.w3.org/2000/svg"
+                        aria-hidden="true"
+                        preserveAspectRatio="none"
+                      >
+                        <rect width="30" height="20" fill="#AA151B"></rect>
+                        <rect y="5" width="30" height="10" fill="#F1BF00"></rect>
+                      </svg>
+
+                    {% when 'en' %}
+                      <svg
+                        viewBox="0 0 60 36"
+                        xmlns="http://www.w3.org/2000/svg"
+                        aria-hidden="true"
+                        preserveAspectRatio="none"
+                      >
+                        <rect width="60" height="36" fill="#012169"></rect>
+
+                        <path
+                          d="M0 0L60 36M60 0L0 36"
+                          stroke="#FFFFFF"
+                          stroke-width="9"
+                        ></path>
+
+                        <path
+                          d="M0 0L60 36M60 0L0 36"
+                          stroke="#C8102E"
+                          stroke-width="4"
+                        ></path>
+
+                        <path
+                          d="M30 0V36M0 18H60"
+                          stroke="#FFFFFF"
+                          stroke-width="12"
+                        ></path>
+
+                        <path
+                          d="M30 0V36M0 18H60"
+                          stroke="#C8102E"
+                          stroke-width="7"
+                        ></path>
+                      </svg>
+
+                    {% else %}
+                      <svg
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                        aria-hidden="true"
+                      >
+                        <circle
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                        ></circle>
+
+                        <path
+                          d="M2 12h20M12 2c3 3 4 6 4 10s-1 7-4 10M12 2c-3 3-4 6-4 10s1 7 4 10"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="1.5"
+                        ></path>
+                      </svg>
+
+                  {% endcase %}
+                {% endcapture %}
+
+                {% if language.iso_code == localization.language.iso_code %}
+
+                  <span
+                    class="language-option is-active"
+                    aria-current="true"
+                    title="{{ language.endonym_name | escape }}"
+                  >
+                    <span
+                      class="language-flag"
+                      aria-hidden="true"
+                    >
+                      {{ language_flag }}
+                    </span>
+
+                    <span class="language-code">
+                      {{ language_short_code }}
+                    </span>
+                  </span>
+
+                {% else %}
+
+                  {% assign desktop_form_id = 'LanguageDesktop-' | append: section.id | append: '-' | append: language.iso_code %}
+
+                  {% form 'localization', id: desktop_form_id %}
+
+                    <input
+                      type="hidden"
+                      name="language_code"
+                      value="{{ language.iso_code }}"
+                    >
+
+                    <button
+                      type="submit"
+                      class="language-option"
+                      aria-label="Cambiar idioma a {{ language.endonym_name | escape }}"
+                      title="{{ language.endonym_name | escape }}"
+                    >
+                      <span
+                        class="language-flag"
+                        aria-hidden="true"
+                      >
+                        {{ language_flag }}
+                      </span>
+
+                      <span class="language-code">
+                        {{ language_short_code }}
+                      </span>
+                    </button>
+
+                  {% endform %}
+
+                {% endif %}
+
+                {% unless forloop.last %}
+                  <span
+                    class="language-separator"
+                    aria-hidden="true"
+                  >
+                    /
+                  </span>
+                {% endunless %}
+
+              {% endfor %}
+
+            </div>
+          {% endif %}
+
+          <!-- CARRITO -->
+          <a
+            href="{{ routes.cart_url }}"
+            class="nav-icon hover:opacity-50 transition-opacity nav-cart-wrap"
+            aria-label="{% if current_language_prefix == 'es' %}Carrito{% else %}Cart{% endif %}"
+          >
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+              />
+            </svg>
+
+            {% if cart.item_count > 0 %}
+
+              <span
+                class="cart-count"
+                id="cartCount"
+              >
+                {{ cart.item_count }}
+              </span>
+
+            {% else %}
+
+              <span
+                class="cart-count"
+                id="cartCount"
+                style="display:none;"
+              >
+                0
+              </span>
+
+            {% endif %}
+          </a>
+
+        </div>
+      </div>
+
+      <!-- LOGO + ABOUT US - MÓVIL -->
+      <div class="lg:hidden nav-mobile-left">
+
+        <a
+          href="{{ routes.root_url }}"
+          class="nav-logo nav-mobile-brand"
+          aria-label="{{ shop.name | escape }}"
+        >
+          {% if section.settings.logo_black != blank or section.settings.logo_white != blank %}
+
+            {% if section.settings.logo_black != blank %}
+              <img
+                src="{{ section.settings.logo_black | image_url: width: 400 }}"
+                alt="{{ shop.name | escape }}"
+                class="nav-symbol-image nav-symbol-image--black{% if section.settings.logo_white == blank %} nav-symbol-image--only{% endif %}"
+                width="{{ section.settings.logo_black.width }}"
+                height="{{ section.settings.logo_black.height }}"
+                loading="eager"
+              >
+            {% endif %}
+
+            {% if section.settings.logo_white != blank %}
+              <img
+                src="{{ section.settings.logo_white | image_url: width: 400 }}"
+                alt="{{ shop.name | escape }}"
+                class="nav-symbol-image nav-symbol-image--white{% if section.settings.logo_black == blank %} nav-symbol-image--only{% endif %}"
+                width="{{ section.settings.logo_white.width }}"
+                height="{{ section.settings.logo_white.height }}"
+                loading="eager"
+              >
+            {% endif %}
+
+          {% else %}
+
+            <span
+              class="font-syncopate font-bold"
+              style="font-size:11px;letter-spacing:.28em;"
+            >
+              {{ shop.name | upcase }}
+            </span>
+
+          {% endif %}
+        </a>
+
+        <a
+        href="{{ pages['about'].url }}"
+          class="nav-mobile-about"
+        >
+          {% if current_language_prefix == 'es' %}
+            Nosotros
+          {% else %}
+            About us
+          {% endif %}
+        </a>
+
+      </div>
+
+      <!-- SELECTOR Y MENÚ - MÓVIL -->
+      <div class="lg:hidden flex items-center nav-mobile-controls">
+
+        <!-- SELECTOR DE IDIOMA - MÓVIL -->
+        {% if localization.available_languages.size > 1 %}
+          <div
+            class="language-switcher language-switcher--mobile"
+            role="navigation"
+            aria-label="Selector de idioma"
+          >
+
+            {% for language in localization.available_languages %}
+
+              {% assign language_prefix = language.iso_code | split: '-' | first %}
+              {% assign language_short_code = language_prefix | upcase %}
+
+              {% capture language_flag %}
+                {% case language_prefix %}
+
+                  {% when 'es' %}
+                    <svg
+                      viewBox="0 0 30 20"
+                      xmlns="http://www.w3.org/2000/svg"
+                      aria-hidden="true"
+                    >
+                      <rect width="30" height="20" fill="#AA151B"/>
+                      <rect y="5" width="30" height="10" fill="#F1BF00"/>
+                    </svg>
+
+                  {% when 'en' %}
+                    <svg
+                      viewBox="0 0 60 36"
+                      xmlns="http://www.w3.org/2000/svg"
+                      aria-hidden="true"
+                    >
+                      <rect width="60" height="36" fill="#012169"/>
+
+                      <path
+                        d="M0 0L60 36M60 0L0 36"
+                        stroke="#FFFFFF"
+                        stroke-width="8"
+                      />
+
+                      <path
+                        d="M0 0L60 36M60 0L0 36"
+                        stroke="#C8102E"
+                        stroke-width="4"
+                      />
+
+                      <path
+                        d="M30 0V36M0 18H60"
+                        stroke="#FFFFFF"
+                        stroke-width="12"
+                      />
+
+                      <path
+                        d="M30 0V36M0 18H60"
+                        stroke="#C8102E"
+                        stroke-width="7"
+                      />
+                    </svg>
+
+                  {% else %}
+                    <svg
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                      aria-hidden="true"
+                    >
+                      <circle
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      ></circle>
+
+                      <path
+                        d="M2 12h20M12 2c3 3 4 6 4 10s-1 7-4 10M12 2c-3 3-4 6-4 10s1 7 4 10"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.5"
+                      ></path>
+                    </svg>
+
+                {% endcase %}
+              {% endcapture %}
+
+              {% if language.iso_code == localization.language.iso_code %}
+
+                <span
+                  class="language-option is-active"
+                  aria-current="true"
+                  title="{{ language.endonym_name | escape }}"
+                >
+                  <span
+                    class="language-flag"
+                    aria-hidden="true"
+                  >
+                    {{ language_flag }}
+                  </span>
+
+                  <span class="language-code">
+                    {{ language_short_code }}
+                  </span>
+                </span>
+
+              {% else %}
+
+                {% assign mobile_form_id = 'LanguageMobile-' | append: section.id | append: '-' | append: language.iso_code %}
+
+                {% form 'localization', id: mobile_form_id %}
+
+                  <input
+                    type="hidden"
+                    name="language_code"
+                    value="{{ language.iso_code }}"
+                  >
+
+                  <button
+                    type="submit"
+                    class="language-option"
+                    aria-label="Cambiar idioma a {{ language.endonym_name | escape }}"
+                    title="{{ language.endonym_name | escape }}"
+                  >
+                    <span
+                      class="language-flag"
+                      aria-hidden="true"
+                    >
+                      {{ language_flag }}
+                    </span>
+
+                    <span class="language-code">
+                      {{ language_short_code }}
+                    </span>
+                  </button>
+
+                {% endform %}
+
+              {% endif %}
+
+              {% unless forloop.last %}
+                <span
+                  class="language-separator"
+                  aria-hidden="true"
+                >
+                  /
+                </span>
+              {% endunless %}
+
+            {% endfor %}
+
+          </div>
+        {% endif %}
+
+        <!-- BOTÓN MENÚ MÓVIL -->
+        <button
+          class="nav-icon hover:opacity-50 transition-opacity"
+          id="mobileMenuBtn"
+          aria-label="{% if current_language_prefix == 'es' %}Menú{% else %}Menu{% endif %}"
+        >
+          <svg
+            class="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M4 6h16M4 12h16M4 18h16"
+            />
+          </svg>
+        </button>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- MENÚ DESPLEGABLE - MÓVIL -->
+  <div
+    id="mobileMenu"
+    class="hidden lg:hidden"
+    style="background:var(--nav-bg);border-top:1px solid var(--border);"
+  >
+    <div
+      class="px-6 py-10 space-y-7"
+      style="padding-left:24px;padding-right:24px;"
+    >
+
+      <a
+        href="{{ collections_href }}"
+        class="block nav-link"
+        style="font-size:13px;color:var(--text)!important;"
+      >
+        {% if current_language_prefix == 'es' %}
+          Colección
+        {% else %}
+          Collection
+        {% endif %}
+      </a>
+
+      <a
+        href="{{ all_products['nimbus'].url }}"
+        class="block nav-link"
+        style="font-size:13px;color:var(--text)!important;"
+      >
+        {% if current_language_prefix == 'es' %}
+          Personalizar
+        {% else %}
+          Customize
+        {% endif %}
+      </a>
+
+      <a
+        href="{{ pages['about'].url }}"
+        class="block nav-link"
+        style="font-size:13px;color:var(--text)!important;"
+      >
+        {% if current_language_prefix == 'es' %}
+          Nosotros
+        {% else %}
+          About us
+        {% endif %}
+      </a>
+
+      <a
+        href="{{ pages['contact'].url }}"
+        class="block nav-link"
+        style="font-size:13px;color:var(--text)!important;"
+      >
+        {% if current_language_prefix == 'es' %}
+          Contacto
+        {% else %}
+          Contact
+        {% endif %}
+      </a>
+
+      <a
+        href="{{ routes.cart_url }}"
+        class="block nav-link"
+        style="font-size:13px;color:var(--text)!important;"
+      >
+        {% if current_language_prefix == 'es' %}
+          Carrito
+        {% else %}
+          Cart
+        {% endif %}
+
+        ({{ cart.item_count }})
+      </a>
+
+    </div>
+  </div>
+</nav>
+
+<style>
+  /* NAVEGACIÓN IZQUIERDA */
+  #mainNav .nav-left-desktop {
+    gap: var(--symbol-logo-gap);
+  }
+
+  #mainNav .nav-left-links {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+  }
+
+  /* ENLACE DEL LOGO PNG */
+  #mainNav .nav-symbol-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    line-height: 0;
+    text-decoration: none;
+    transition:
+      opacity 0.2s ease,
+      transform 0.2s ease;
+  }
+
+  #mainNav .nav-symbol-link:hover {
+    opacity: 0.65;
+    transform: translateY(-1px);
+  }
+
+  /* TAMAÑO DEL LOGO PNG EN ESCRITORIO */
+  #mainNav .nav-symbol-link--desktop .nav-symbol-image {
+    display: block;
+    width: var(--symbol-logo-width-desktop);
+    max-width: none;
+    height: auto;
+    max-height: 46px;
+    object-fit: contain;
+  }
+
+  /* LOGO MÓVIL */
+  #mainNav .nav-mobile-brand {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-start;
+    line-height: 0;
+  }
+
+  #mainNav .nav-mobile-brand .nav-symbol-image {
+    display: block;
+    width: var(--symbol-logo-width-mobile);
+    max-width: none;
+    height: auto;
+    max-height: 42px;
+    object-fit: contain;
+  }
+
+  /* CAMBIO AUTOMÁTICO ENTRE LOGO BLANCO Y NEGRO */
+  #mainNav .nav-symbol-image--black {
+    display: none !important;
+  }
+
+  #mainNav .nav-symbol-image--white {
+    display: block !important;
+  }
+
+  #mainNav.nav-solid .nav-symbol-image--black {
+    display: block !important;
+  }
+
+  #mainNav.nav-solid .nav-symbol-image--white {
+    display: none !important;
+  }
+
+  /* SI SOLO SE SUBE UN LOGO, SE MUESTRA SIEMPRE */
+  #mainNav .nav-symbol-image--only {
+    display: block !important;
+  }
+
+  /* CONTENEDOR DEL SELECTOR */
+  #mainNav .language-switcher {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+    line-height: 1;
+    color: #ffffff;
+    transition: color 0.5s ease;
+  }
+
+  /* FORMULARIOS DE SHOPIFY */
+  #mainNav .language-switcher form {
+    display: inline-flex;
+    align-items: center;
+    margin: 0;
+  }
+
+  /* BOTONES DE IDIOMA */
+  #mainNav .language-option {
+    appearance: none;
+    -webkit-appearance: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 6px 0;
+    margin: 0;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    color: inherit !important;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    line-height: 1;
+    text-transform: uppercase;
+    text-decoration: none;
+    opacity: 0.68;
+    cursor: pointer;
+    transition:
+      opacity 0.2s ease,
+      transform 0.2s ease;
+  }
+
+  /* BANDERAS */
+  #mainNav .language-flag {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 15px;
+    flex-shrink: 0;
+    overflow: hidden;
+    border-radius: 2px;
+    line-height: 1;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.25);
+  }
+
+  #mainNav .language-flag svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* CÓDIGOS ES / EN */
+  #mainNav .language-code {
+    color: inherit !important;
+  }
+
+  /* SEPARADOR */
+  #mainNav .language-separator {
+    color: inherit !important;
+    font-size: 11px;
+    line-height: 1;
+    opacity: 0.45;
+  }
+
+  /* IDIOMA ACTIVO */
+  #mainNav .language-option.is-active {
+    opacity: 1;
+    font-weight: 700;
+    border-bottom: 1px solid currentColor;
+  }
+
+  /* EFECTO AL PASAR EL RATÓN */
+  #mainNav button.language-option:hover,
+  #mainNav button.language-option:focus-visible {
+    opacity: 1;
+    transform: translateY(-1px);
+    outline: none;
+  }
+
+  /* BLANCO CUANDO EL MENÚ ESTÁ SOBRE EL VÍDEO */
+  #mainNav:not(.nav-solid) .language-switcher {
+    color: #ffffff !important;
+  }
+
+  #mainNav:not(.nav-solid) .language-option,
+  #mainNav:not(.nav-solid) .language-code,
+  #mainNav:not(.nav-solid) .language-separator {
+    color: #ffffff !important;
+  }
+
+  /* OSCURO CUANDO EL MENÚ TIENE FONDO BLANCO */
+  #mainNav.nav-solid .language-switcher {
+    color: var(--text) !important;
+  }
+
+  #mainNav.nav-solid .language-option,
+  #mainNav.nav-solid .language-code,
+  #mainNav.nav-solid .language-separator {
+    color: var(--text) !important;
+  }
+
+  /* LOGO + ABOUT US EN MÓVIL */
+  #mainNav .nav-mobile-left {
+    display: none;
+  }
+
+  #mainNav .nav-mobile-about {
+    color: inherit !important;
+    text-decoration: none;
+    text-transform: uppercase;
+    white-space: nowrap;
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    line-height: 1;
+    opacity: 0.9;
+    transition: opacity 0.2s ease;
+  }
+
+  #mainNav .nav-mobile-about:hover {
+    opacity: 0.6;
+  }
+
+  #mainNav:not(.nav-solid) .nav-mobile-about {
+    color: #ffffff !important;
+  }
+
+  #mainNav.nav-solid .nav-mobile-about {
+    color: var(--text) !important;
+  }
+
+  /* SEPARACIÓN ENTRE IDIOMAS Y MENÚ MÓVIL */
+  #mainNav .nav-mobile-controls {
+    gap: 20px;
+  }
+
+  #mainNav #mobileMenuBtn {
+    flex-shrink: 0;
+    margin-left: 2px;
+  }
+
+  /* AJUSTES PARA MÓVIL */
+  @media screen and (max-width: 1023px) {
+    #mainNav .nav-mobile-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    #mainNav .nav-mobile-controls {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    #mainNav .language-switcher--mobile {
+      gap: 6px;
+    }
+
+    #mainNav .language-switcher--mobile .language-option {
+      gap: 4px;
+      padding: 5px 0;
+      font-size: 10px;
+      letter-spacing: 0.1em;
+    }
+
+    #mainNav .language-switcher--mobile .language-flag {
+      width: 19px;
+      height: 13px;
+    }
+
+    #mainNav .language-switcher--mobile .language-separator {
+      font-size: 9px;
+    }
+  }
+
+  @media screen and (max-width: 380px) {
+    #mainNav .nav-mobile-left {
+      gap: 8px;
+    }
+
+    #mainNav .nav-mobile-about {
+      font-size: 8px;
+      letter-spacing: 0.1em;
+    }
+
+    #mainNav .nav-mobile-controls {
+      gap: 12px;
+    }
+
+    #mainNav .language-switcher--mobile {
+      gap: 4px;
+    }
+
+    #mainNav .language-switcher--mobile .language-option {
+      gap: 3px;
+      font-size: 9px;
+    }
+
+    #mainNav .language-switcher--mobile .language-flag {
+      width: 17px;
+      height: 12px;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Navigation",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Logo de la navegación"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo_black",
+      "label": "Logo negro PNG"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo_white",
+      "label": "Logo blanco PNG"
+    },
+    {
+      "type": "range",
+      "id": "logo_width_desktop",
+      "min": 20,
+      "max": 140,
+      "step": 2,
+      "unit": "px",
+      "label": "Ancho del logo en escritorio",
+      "default": 42
+    },
+    {
+      "type": "range",
+      "id": "logo_width_mobile",
+      "min": 20,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "label": "Ancho del logo en móvil",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "logo_menu_gap",
+      "min": 8,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "label": "Separación entre logo y Collection",
+      "default": 28
+    }
+  ]
+}
+{% endschema %}

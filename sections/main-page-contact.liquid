@@ -1,0 +1,204 @@
+{% comment %} sections/main-page-contact.liquid {% endcomment %}
+
+<style>
+  .page-hero { padding-top:72px; border-bottom:1px solid var(--border); }
+  .page-hero-inner { max-width:1440px; margin:0 auto; padding:80px 24px 72px; }
+  @media(min-width:1024px){ .page-hero-inner { padding:100px 56px 88px; } }
+
+  .contact-grid { max-width:1440px; margin:0 auto; display:grid; grid-template-columns:1fr; }
+  @media(min-width:1024px){ .contact-grid { grid-template-columns:420px 1fr; } }
+
+  .contact-left  { padding:64px 24px; border-bottom:1px solid var(--border); }
+  @media(min-width:1024px){ .contact-left { padding:80px 56px; border-bottom:none; border-right:1px solid var(--border); } }
+  .contact-right { padding:64px 24px; }
+  @media(min-width:1024px){ .contact-right { padding:80px 72px; } }
+
+  .field-group { margin-bottom:36px; }
+  .field-label { display:block; font-size:10px; font-weight:500; letter-spacing:.34em; text-transform:uppercase; color:var(--text-muted); margin-bottom:12px; transition:color .2s; }
+  .field-input, .field-textarea, .field-select {
+    display:block; width:100%; background:transparent; border:none;
+    border-bottom:1px solid var(--border); padding:12px 0;
+    font-size:15px; font-weight:300; color:var(--text); letter-spacing:.03em;
+    outline:none; transition:border-color .25s; font-family:inherit;
+    -webkit-appearance:none; appearance:none;
+  }
+  .field-input:focus, .field-textarea:focus, .field-select:focus { border-bottom-color:var(--text); }
+  .field-group:focus-within .field-label { color:var(--text); }
+  .field-input::placeholder, .field-textarea::placeholder { color:var(--text-muted); font-weight:300; }
+  .field-textarea { resize:none; min-height:120px; line-height:1.8; }
+  .field-select {
+    cursor:pointer;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23aaaaaa' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat:no-repeat; background-position:right 4px center; padding-right:24px;
+  }
+  .field-select option { background:var(--bg); color:var(--text); }
+
+  .btn-submit {
+    display:inline-flex; align-items:center; gap:14px;
+    font-size:12px; font-weight:400; letter-spacing:.28em; text-transform:uppercase;
+    padding:18px 48px; border:1px solid var(--text); color:var(--text);
+    background:transparent; cursor:pointer; transition:all .35s; font-family:inherit;
+  }
+  .btn-submit:hover { background:var(--text); color:var(--bg); }
+  .btn-submit svg { transition:transform .35s; }
+  .btn-submit:hover svg { transform:translateX(4px); }
+
+  .contact-item { display:flex; flex-direction:column; gap:6px; padding:24px 0; border-bottom:1px solid var(--border); text-decoration:none; transition:opacity .25s; }
+  .contact-item:first-of-type { border-top:1px solid var(--border); }
+  .contact-item:hover { opacity:.6; }
+  .contact-item-label { font-size:10px; font-weight:500; letter-spacing:.34em; text-transform:uppercase; color:var(--text-muted); }
+  .contact-item-value { font-size:14px; font-weight:300; letter-spacing:.04em; color:var(--text); }
+
+  #charCount { font-size:11px; letter-spacing:.1em; color:var(--text-muted); text-align:right; margin-top:8px; display:block; }
+  .nav-link.active-page::after { width:100%; }
+
+  #nameEmailRow { display:grid; grid-template-columns:1fr 1fr; gap:0 48px; }
+  @media(max-width:639px){ #nameEmailRow { grid-template-columns:1fr; } }
+</style>
+
+<!-- Page hero -->
+<div class="page-hero">
+  <div class="page-hero-inner">
+    <div class="reveal">
+      <span class="section-label block mb-6">{{ 'contact.eyebrow' | t }}</span>
+      <h1 style="font-family:'Syncopate',sans-serif;font-size:clamp(2rem,6vw,5rem);font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text);line-height:1.05;margin:0 0 28px;">
+        {{ section.settings.heading | default: 'Hablemos' }}
+      </h1>
+      <p style="font-size:16px;font-weight:300;color:var(--text-light);line-height:2;letter-spacing:.03em;max-width:520px;">
+        {{ section.settings.subheading | default: 'Preguntas sobre pedidos, personalización o colaboraciones. Respondemos en menos de 48 horas.' }}
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- Contact body -->
+<div class="contact-grid" style="border-top:1px solid var(--border);">
+
+  <!-- LEFT: info -->
+  <div class="contact-left">
+    <div class="reveal" style="margin-bottom:52px;">
+      <span class="section-label block mb-8">{{ 'contact.channels' | t }}</span>
+
+      {%- if section.settings.email != blank -%}
+        <a href="mailto:{{ section.settings.email }}" class="contact-item">
+          <span class="contact-item-label">Email</span>
+          <span class="contact-item-value">{{ section.settings.email }}</span>
+        </a>
+      {%- endif -%}
+
+      {%- if section.settings.instagram != blank -%}
+        <a href="{{ section.settings.instagram }}" class="contact-item" target="_blank" rel="noopener">
+          <span class="contact-item-label">Instagram</span>
+          <span class="contact-item-value">@{{ section.settings.instagram | remove: 'https://instagram.com/' | remove: 'https://www.instagram.com/' | remove: '@' }}</span>
+        </a>
+      {%- endif -%}
+
+      {%- if section.settings.whatsapp != blank -%}
+        <a href="{{ section.settings.whatsapp }}" class="contact-item" target="_blank" rel="noopener">
+          <span class="contact-item-label">WhatsApp</span>
+          <span class="contact-item-value">{{ section.settings.whatsapp_label | default: '+34 600 000 000' }}</span>
+        </a>
+      {%- endif -%}
+
+      <div class="contact-item" style="cursor:default;">
+        <span class="contact-item-label">{{ 'contact.hours_label' | t }}</span>
+        <span class="contact-item-value">{{ section.settings.hours | default: 'Lun – Vie, 10:00 – 19:00 CET' }}</span>
+      </div>
+    </div>
+
+    <div class="reveal" style="animation-delay:.15s;">
+      <span class="section-label block mb-6">{{ 'contact.based_in' | t }}</span>
+      <p style="font-size:14px;font-weight:300;color:var(--text-light);line-height:2;letter-spacing:.03em;">
+        {{ section.settings.location | default: 'Madrid, España' | newline_to_br }}<br>
+        {{ section.settings.shipping_area | default: 'Envíos a toda Europa' }}
+      </p>
+    </div>
+  </div>
+
+  <!-- RIGHT: formulario -->
+  <div class="contact-right">
+    <div class="reveal">
+      <span class="section-label block mb-10">{{ 'contact.form_heading' | t }}</span>
+
+      {%- form 'contact', id: 'contactForm' -%}
+        {%- if form.posted_successfully? -%}
+          <div style="padding:32px;border:1px solid var(--border);text-align:center;margin-bottom:32px;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--text)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" style="margin:0 auto 16px;">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+            <p style="font-size:11px;font-weight:500;letter-spacing:.3em;text-transform:uppercase;color:var(--text);margin-bottom:8px;">{{ 'contact.sent_title' | t }}</p>
+            <p style="font-size:14px;font-weight:300;color:var(--text-light);">{{ 'contact.sent_body' | t }}</p>
+          </div>
+        {%- else -%}
+
+          <div id="nameEmailRow">
+            <div class="field-group">
+              <label class="field-label" for="ContactForm-name">{{ 'contact.field_name' | t }}</label>
+              <input class="field-input" id="ContactForm-name" type="text" name="contact[name]"
+                     placeholder="{{ 'contact.ph_name' | t }}" autocomplete="given-name"
+                     value="{% if form.name %}{{ form.name }}{% endif %}">
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="ContactForm-email">{{ 'contact.field_email' | t }}</label>
+              <input class="field-input" id="ContactForm-email" type="email" name="contact[email]"
+                     placeholder="{{ 'contact.ph_email' | t }}" autocomplete="email" required
+                     value="{% if form.email %}{{ form.email }}{% endif %}">
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="ContactForm-Subject">{{ 'contact.field_subject' | t }}</label>
+            <select class="field-select" id="ContactForm-Subject" name="contact[Subject]">
+              <option value="" disabled selected>{{ 'contact.topic_placeholder' | t }}</option>
+              <option value="pedido">{{ 'contact.topic_order' | t }}</option>
+              <option value="personalizacion">{{ 'contact.topic_custom' | t }}</option>
+              <option value="envio">{{ 'contact.topic_shipping' | t }}</option>
+              <option value="colaboracion">{{ 'contact.topic_press' | t }}</option>
+              <option value="otro">{{ 'contact.topic_other' | t }}</option>
+            </select>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="ContactForm-body">{{ 'contact.field_message' | t }}</label>
+            <textarea class="field-textarea" id="ContactForm-body" name="contact[body]"
+                      placeholder="{{ 'contact.ph_message' | t }}"
+                      maxlength="800">{% if form.body %}{{ form.body }}{% endif %}</textarea>
+            <span id="charCount">0 / 800</span>
+          </div>
+
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px;">
+            <button type="submit" class="btn-submit">
+              {{ 'contact.submit' | t }}
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 12h14M13 6l6 6-6 6"/>
+              </svg>
+            </button>
+            <p style="font-size:12px;letter-spacing:.1em;color:var(--text-muted);">
+              {{ section.settings.response_time | default: 'Respuesta en menos de 48 h' }}
+            </p>
+          </div>
+
+        {%- endif -%}
+      {%- endform -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Contact page",
+  "settings": [
+    {"type":"text",    "id":"heading",       "label":"Título",         "default":"Hablemos"},
+    {"type":"textarea","id":"subheading",    "label":"Subtítulo",      "default":"Preguntas sobre pedidos, personalización o colaboraciones. Respondemos en menos de 48 horas."},
+    {"type":"text",    "id":"email",         "label":"Email"},
+    {"type":"url",     "id":"instagram",     "label":"Instagram URL"},
+    {"type":"url",     "id":"whatsapp",      "label":"WhatsApp URL"},
+    {"type":"text",    "id":"whatsapp_label","label":"WhatsApp número", "default":"+34 600 000 000"},
+    {"type":"text",    "id":"hours",         "label":"Horario",         "default":"Lun – Vie, 10:00 – 19:00 CET"},
+    {"type":"text",    "id":"location",      "label":"Ciudad",          "default":"Madrid, España"},
+    {"type":"text",    "id":"shipping_area", "label":"Área de envío",   "default":"Worldwide Shipping"},
+    {"type":"text",    "id":"response_time", "label":"Tiempo respuesta","default":"We respond to all inquiries within 48 hours."}
+  ],
+  "presets": [{"name":"Contact page"}]
+}
+{% endschema %}

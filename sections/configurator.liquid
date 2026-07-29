@@ -1,0 +1,170 @@
+{% comment %} sections/configurator.liquid {% endcomment %}
+{%- assign cfg = all_products[section.settings.product] -%}
+
+<section id="configurator" style="background:var(--bg);">
+  <div class="text-center reveal" style="padding:56px 24px 40px;">
+    <span class="section-label block mb-3">Personalización</span>
+    <h2 class="section-title" style="font-size:clamp(1.6rem,3.2vw,2.6rem);font-weight:300;">Construye Tu Pieza Única</h2>
+    <p style="font-size:13px;letter-spacing:.14em;color:var(--text-light);font-weight:300;margin-top:12px;">Elige cada detalle de tu bolso</p>
+  </div>
+
+  {%- if cfg != blank -%}
+
+  <script id="kn-variant-data" type="application/json">
+  {
+    "variants": [
+      {%- for v in cfg.variants -%}
+        {%- unless forloop.first -%},{%- endunless -%}
+        {
+          "id": {{ v.id }},
+          "title": {{ v.title | json }},
+          "price": {{ v.price }},
+          "available": {{ v.available }},
+          "image": {{ v.featured_image | img_url: '1000x' | default: '' | json }},
+          "imageBg": {{ v.metafields.kaynotomia.image_bg | default: '#c9ccd0' | json }},
+          "descTitle": {{ v.metafields.kaynotomia.desc_subtitle | default: v.title | json }},
+          "descBody": {{ v.metafields.kaynotomia.desc_body | default: '' | json }}
+        }
+      {%- endfor -%}
+    ]
+  }
+  </script>
+
+  {% form 'product', cfg, id: 'configurator-form' %}
+  <div class="config-grid" style="display:grid;grid-template-columns:1fr;max-width:1400px;margin:0 auto;padding:0 1.5rem 60px;gap:2rem;">
+
+    <!-- LEFT -->
+    <div class="config-left" style="border-right:none;">
+      <div id="imagePanelWrap" style="position:relative;overflow:hidden;background:#c9ccd0;transition:background .6s;border-radius:4px;aspect-ratio:4/5;display:flex;align-items:center;justify-content:center;">
+        {%- if cfg.featured_image -%}
+          <img id="configPreview" src="{{ cfg.featured_image | img_url: '1000x' }}" alt="{{ cfg.featured_image.alt | escape }}" style="display:block;width:100%;height:100%;object-fit:cover;transition:opacity .4s;">
+        {%- else -%}
+          <img id="configPreview" src="" alt="" style="display:block;width:100%;height:100%;object-fit:cover;transition:opacity .4s;">
+        {%- endif -%}
+        <img id="configHover" src="" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .3s;pointer-events:none;" aria-hidden="true">
+        <div style="position:absolute;bottom:0;left:0;right:0;padding:40px 32px 24px;background:linear-gradient(to top,rgba(0,0,0,.3),transparent);pointer-events:none;">
+          <div style="display:flex;align-items:baseline;gap:10px;">
+            <h3 id="configName" style="font-size:11px;font-weight:400;letter-spacing:.28em;text-transform:uppercase;color:#fff;margin:0;"></h3>
+            <p id="configPrice" style="font-size:18px;font-weight:200;color:#fff;margin:0;">{{ cfg.price | money }}</p>
+          </div>
+        </div>
+      </div>
+      <div id="modelDesc" style="padding:32px 0 0;">
+        <span id="descLabel"></span>
+        <h3 id="descTitle"></h3>
+        <p id="descBody"></p>
+        <div class="measurements-grid">
+          <div><span class="meas-label">Altura</span><span class="meas-value">14 cm</span></div>
+          <div><span class="meas-label">Ancho</span><span class="meas-value">8 cm</span></div>
+          <div><span class="meas-label">Base</span><span class="meas-value">18 cm</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="config-right reveal" style="padding-left:0;">
+      <input type="hidden" name="id" id="selectedVariantId" value="{{ cfg.selected_or_first_available_variant.id }}">
+
+      <div class="config-step step-unlocked" id="step-model">
+        <div class="step-node"><div class="step-node-inner"></div><svg class="step-node-check" width="7" height="7" viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="var(--bg)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="step-header" data-toggle="model"><span class="step-num">01</span><h4 class="step-title">Elige Tu Modelo</h4></div>
+        <div class="step-body" id="body-model">
+          <div class="flex flex-wrap gap-3 pt-5">
+            {%- for variant in cfg.variants -%}
+              <button type="button"
+                class="text-option{% if forloop.first %} active{% endif %}"
+                data-type="variant"
+                data-variant-id="{{ variant.id }}"
+                data-variant-title="{{ variant.title | escape }}"
+                data-variant-image="{{ variant.featured_image | img_url: '1000x' | default: '' }}"
+                data-variant-image-bg="{{ variant.metafields.kaynotomia.image_bg | default: '#c9ccd0' }}"
+                data-variant-desc-title="{{ variant.metafields.kaynotomia.desc_subtitle | default: variant.title | escape }}"
+                data-variant-desc-body="{{ variant.metafields.kaynotomia.desc_body | default: '' | escape }}"
+                data-img="{{ variant.featured_image | img_url: '1000x' | default: '' }}"
+                {% unless variant.available %}disabled style="opacity:.4;cursor:not-allowed;"{% endunless %}>
+                <span class="opt-dot"></span>{{ variant.title }}
+                {%- unless variant.available -%}&thinsp;<span style="font-size:9px;opacity:.5;">Agotado</span>{%- endunless -%}
+              </button>
+            {%- endfor -%}
+          </div>
+        </div>
+      </div>
+
+      <div class="config-step step-locked" id="step-sack">
+        <div class="step-node"><div class="step-node-inner"></div><svg class="step-node-check" width="7" height="7" viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="var(--bg)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="step-header" data-toggle="sack"><span class="step-num">02</span><h4 class="step-title">Color de Saco Interno</h4></div>
+        <div class="step-body step-body-hidden" id="body-sack">
+          <input type="hidden" name="properties[Saco interno]" id="prop-sack" value="">
+          <div class="flex gap-6 items-start pt-5">
+            <div class="swatch-wrap" data-type="sack" data-id="Negro">
+              <div class="swatch-circle" style="background:#1a1a1a;"></div>
+              <span class="swatch-label">Negro</span>
+            </div>
+            <div class="swatch-wrap" data-type="sack" data-id="Blanco">
+              <div class="swatch-circle swatch-white" style="background:#F5F5F0;"></div>
+              <span class="swatch-label">Blanco</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="config-step step-locked" id="step-cord">
+        <div class="step-node"><div class="step-node-inner"></div><svg class="step-node-check" width="7" height="7" viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="var(--bg)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="step-header" data-toggle="cord"><span class="step-num">03</span><h4 class="step-title">Tipo de Cuerda</h4></div>
+        <div class="step-body step-body-hidden" id="body-cord">
+          <input type="hidden" name="properties[Cuerda]" id="prop-cord" value="">
+          <div class="flex flex-wrap gap-3 pt-5">
+            <button type="button" class="text-option" data-type="cord" data-id="Algodón"><span class="opt-dot"></span>Algodón</button>
+            <button type="button" class="text-option" data-type="cord" data-id="Acero"><span class="opt-dot"></span>Acero</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="config-step step-locked" id="step-template">
+        <div class="step-node"><div class="step-node-inner"></div><svg class="step-node-check" width="7" height="7" viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="var(--bg)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="step-header" data-toggle="template"><span class="step-num">04</span><h4 class="step-title">Color de Plantilla</h4></div>
+        <div class="step-body step-body-hidden" id="body-template">
+          <input type="hidden" name="properties[Plantilla]" id="prop-template" value="">
+          <div class="flex gap-6 items-start pt-5">
+            <div class="swatch-wrap" data-type="template" data-id="Blanco"><div class="swatch-circle swatch-white" style="background:#F0EEE9;"></div><span class="swatch-label">Blanco</span></div>
+            <div class="swatch-wrap" data-type="template" data-id="Negro"><div class="swatch-circle" style="background:#1a1a1a;"></div><span class="swatch-label">Negro</span></div>
+            <div class="swatch-wrap" data-type="template" data-id="Burdeos"><div class="swatch-circle" style="background:#7A2035;"></div><span class="swatch-label">Burdeos</span></div>
+            <div class="swatch-wrap" data-type="template" data-id="Lila"><div class="swatch-circle" style="background:#A98EC8;"></div><span class="swatch-label">Lila</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="config-step step-locked" id="step-hook">
+        <div class="step-node"><div class="step-node-inner"></div><svg class="step-node-check" width="7" height="7" viewBox="0 0 8 8" fill="none"><polyline points="1,4 3,6 7,2" stroke="var(--bg)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="step-header" data-toggle="hook"><span class="step-num">05</span><h4 class="step-title">Ganchos Decorativos</h4></div>
+        <div class="step-body step-body-hidden" id="body-hook">
+          <input type="hidden" name="properties[Ganchos]" id="prop-hook" value="">
+          <div class="flex flex-wrap gap-3 pt-5">
+            <button type="button" class="text-option" data-type="hook" data-id="Metal Claro"><span class="opt-dot"></span>Metal Claro</button>
+            <button type="button" class="text-option" data-type="hook" data-id="Metal Oscuro"><span class="opt-dot"></span>Metal Oscuro</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="addToCartWrap" style="opacity:0;transform:translateY(16px);transition:opacity .55s,transform .55s;pointer-events:none;margin-top:48px;">
+        <button type="submit" id="addToCartBtn" class="btn-luxury btn-luxury-dark w-full text-center" style="padding:20px 40px;">Añadir al Carrito</button>
+        <p id="cartMessage" class="cart-msg"></p>
+      </div>
+    </div>
+  </div>
+  {% endform %}
+
+  {%- else -%}
+    <p class="text-center py-20 section-label">Selecciona un producto en el editor del tema.</p>
+  {%- endif -%}
+</section>
+
+{% schema %}
+{
+  "name": "Configurator",
+  "settings": [
+    {"type":"product","id":"product","label":"Producto Nimbus"}
+  ],
+  "presets": [{"name":"Configurator"}]
+}
+{% endschema %}

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="{{ localization.language.iso_code }}" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  {%- comment -%}
+    FIX SEO-01 — Marca duplicada en el <title>.
+    Antes: <title>{{ page_title }} — {{ shop.name }}</title>
+    Producía "About Kaynotomia | 3D Printed Fashion from Madrid — Kaynotomia".
+    Ahora el sufijo solo se añade si el título no contiene ya el nombre de la tienda.
+  {%- endcomment -%}
+  <title>{{ page_title }}{% unless page_title contains shop.name %} — {{ shop.name }}{% endunless %}</title>
+
+  <meta name="description" content="{{ page_description | escape }}">
+
+  {%- comment -%}
+    FIX SEO-02 — hreflang. No existía.
+    Sin esto Google no relaciona las versiones ES y EN y solo indexa una.
+    REQUISITOS: idiomas publicados en Configuración → Idiomas, y localización
+    de URL en modo SUBCARPETA en Configuración → Mercados.
+  {%- endcomment -%}
+  {%- unless request.page_type == 'cart'
+           or request.page_type == 'customers/account'
+           or request.page_type == 'customers/login'
+           or request.page_type == 'customers/register'
+           or request.page_type == 'customers/order'
+           or request.page_type == 'customers/reset_password'
+           or request.page_type == 'customers/activate_account'
+           or request.page_type == 'password'
+           or request.page_type == '404' -%}
+
+    {%- liquid
+      assign base_path = request.path
+      assign current_root = localization.language.root_url
+      if current_root != '/'
+        assign base_path = base_path | remove_first: current_root
+      endif
+      if base_path == blank
+        assign base_path = '/'
+      endif
+    -%}
+
+    {%- for locale in shop.published_locales -%}
+      {%- liquid
+        if locale.root_url == '/'
+          assign alt_path = base_path
+        else
+          assign alt_path = locale.root_url | append: base_path
+        endif
+      -%}
+      <link rel="alternate" hreflang="{{ locale.iso_code }}" href="{{ request.origin }}{{ alt_path }}">
+      {%- if locale.primary -%}
+        <link rel="alternate" hreflang="x-default" href="{{ request.origin }}{{ alt_path }}">
+      {%- endif -%}
+    {%- endfor -%}
+
+  {%- endunless -%}
+
+  {%- comment -%}
+    FIX SEO-03 — Favicon.
+    settings.favicon se referenciaba, pero settings_schema.json estaba vacío ([]),
+    así que la condición nunca se cumplía y el favicon no se renderizaba jamás.
+    El ajuste ya existe en el nuevo settings_schema.json.
+  {%- endcomment -%}
+  {%- if settings.favicon != blank -%}
+    <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
+    <link rel="apple-touch-icon" href="{{ settings.favicon | image_url: width: 180, height: 180 }}">
+  {%- endif -%}
+
+  {{ content_for_header }}
+
+  {%- comment -%} Tailwind utilities are compiled into theme.css {%- endcomment -%}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  {%- comment -%}
+    FIX PERF-01 — Las webfonts bloqueaban el render.
+    preload + media="print"/onload libera el hilo principal y mejora el LCP.
+    El <noscript> mantiene el fallback sin JavaScript.
+  {%- endcomment -%}
+  {%- assign google_fonts_url = 'https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Jost:wght@200;300;400;500;600&display=swap' -%}
+  <link rel="preload" as="style" href="{{ google_fonts_url }}">
+  <link rel="stylesheet" href="{{ google_fonts_url }}" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="{{ google_fonts_url }}"></noscript>
+
+  {{ 'theme.css' | asset_url | stylesheet_tag }}
+
+  <style>
+    .skip-to-content{position:absolute;left:-9999px;top:0;z-index:9999;background:var(--bg);color:var(--text);padding:14px 22px;font-size:11px;letter-spacing:.26em;text-transform:uppercase;border:1px solid var(--text);}
+    .skip-to-content:focus{left:12px;top:12px;}
+  </style>
+
+  {%- comment -%} FIX SEO-04 — Datos estructurados. El tema no tenía ningún JSON-LD. {%- endcomment -%}
+  {%- render 'structured-data' -%}
+</head>
+<body class="font-futura antialiased" style="background:var(--bg);color:var(--text);">
+  <a href="#MainContent" class="skip-to-content">{{ 'general.accessibility.skip_to_content' | t }}</a>
+
+  {% section 'nav' %}
+  <main id="MainContent" role="main">{{ content_for_layout }}</main>
+  {% section 'footer' %}
+
+  {{ 'theme.js' | asset_url | script_tag }}
+</body>
+</html>

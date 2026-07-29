@@ -1,0 +1,415 @@
+{% comment %} sections/main-product.liquid {% endcomment %}
+{% assign current_language_prefix = localization.language.iso_code | split: '-' | first %}
+{%- comment -%}— Variant JSON para JS —{%- endcomment -%}
+<script id="kn-variant-data" type="application/json">
+{
+  "variants": [
+    {%- for v in product.variants -%}
+    {%- unless forloop.first -%},{%- endunless -%}
+    {%- assign vdesc_block = null -%}
+    {%- for b in section.blocks -%}
+      {%- if b.type == 'variant_desc' and b.settings.variant_title == v.title -%}
+        {%- assign vdesc_block = b -%}
+        {%- break -%}
+      {%- endif -%}
+    {%- endfor -%}
+    {%- assign v_bg    = vdesc_block.settings.image_bg   | default: v.metafields.custom.image_bg   | default: '#c9ccd0' -%}
+    {%- assign v_dtitle = vdesc_block.settings.desc_title | default: v.metafields.custom.desc_title | default: v.title -%}
+    {%- assign v_dbody  = vdesc_block.settings.desc_body  | default: v.metafields.custom.desc_body  | default: '' -%}
+    {
+      "id":        {{ v.id }},
+      "title":     {{ v.title | json }},
+      "price":     {{ v.price }},
+      "available": {{ v.available }},
+      "image":     {{ v.featured_image | img_url: '1600x' | default: '' | json }},
+      "imageSm":   {{ v.featured_image | img_url: '600x'  | default: '' | json }},
+      "imageBg":   {{ v_bg     | json }},
+      "descTitle": {{ v_dtitle | json }},
+      "descBody":  {{ v_dbody  | json }}
+    }
+    {%- endfor -%}
+  ]
+}
+</script>
+
+{%- comment -%}— Config options JSON desde blocks —{%- endcomment -%}
+<script id="kn-config-data" type="application/json">
+{
+  "sacks": [
+    {%- assign sacks = section.blocks | where: 'type', 'sack' -%}
+    {%- for b in sacks -%}
+    {%- unless forloop.first -%},{%- endunless -%}
+    {
+      "id":   {{ b.id | json }},
+      "name": {{ b.settings.name | default: 'Color' | json }},
+      "hex":  {{ b.settings.hex  | default: '#888888' | json }},
+      "imgs": [
+        {%- for v in product.variants -%}
+        {%- unless forloop.first -%},{%- endunless -%}
+        {%- assign img_key = 'img_v' | append: forloop.index -%}
+        {%- assign picked = b.settings[img_key] -%}
+        {%- if picked != blank -%}{{ picked | img_url: '1600x' | json }}{%- elsif b.settings.image != blank -%}{{ b.settings.image | img_url: '1600x' | json }}{%- else -%}""{%- endif -%}
+        {%- endfor -%}
+      ]
+    }
+    {%- endfor -%}
+  ],
+  "templates": [
+    {%- assign tmplts = section.blocks | where: 'type', 'template' -%}
+    {%- for b in tmplts -%}
+    {%- unless forloop.first -%},{%- endunless -%}
+    {
+      "id":   {{ b.id | json }},
+      "name": {{ b.settings.name | default: 'Color' | json }},
+      "hex":  {{ b.settings.hex  | default: '#888888' | json }},
+      "img":  {{ b.settings.image | img_url: '1600x' | default: '' | json }},
+      "imgs": [
+        {%- for v in product.variants -%}
+        {%- unless forloop.first -%},{%- endunless -%}
+        {%- assign img_key = 'img_v' | append: forloop.index -%}
+        {%- assign picked = b.settings[img_key] -%}
+        {%- if picked != blank -%}{{ picked | img_url: '1600x' | json }}{%- elsif b.settings.image != blank -%}{{ b.settings.image | img_url: '1600x' | json }}{%- else -%}""{%- endif -%}
+        {%- endfor -%}
+      ]
+    }
+    {%- endfor -%}
+  ]
+}
+</script>
+
+{%- comment -%}— Breadcrumb —{%- endcomment -%}
+<div style="padding-top:73px;border-bottom:1px solid var(--border);">
+  <div class="max-w-screen-2xl mx-auto px-6 lg:px-14 py-4" style="display:flex;align-items:center;">
+
+    <a
+      href="{{ routes.root_url }}"
+      style="font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--text-muted);text-decoration:none;transition:color .2s;"
+    >
+      {% if current_language_prefix == 'es' %}
+        Inicio
+      {% else %}
+        Home
+      {% endif %}
+    </a>
+
+    <span style="font-size:11px;color:var(--text-muted);margin:0 10px;">/</span>
+
+    <a
+      href="{{ routes.collections_url }}"
+      style="font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--text-muted);text-decoration:none;transition:color .2s;"
+    >
+      {% if current_language_prefix == 'es' %}
+        Colecciones
+      {% else %}
+        Collections
+      {% endif %}
+    </a>
+
+    <span style="font-size:11px;color:var(--text-muted);margin:0 10px;">/</span>
+
+    <span
+      id="breadcrumbName"
+      style="font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--text);"
+    >
+      {{ product.title }}
+    </span>
+
+  </div>
+</div>
+{%- comment -%}— Product Grid —{%- endcomment -%}
+<form id="product-form" method="post" action="{{ routes.cart_add_url }}">
+  <input type="hidden" name="id"                           id="selectedVariantId"  value="{{ product.selected_or_first_available_variant.id }}">
+  <input type="hidden" name="quantity"                                              value="1">
+  <input type="hidden" name="properties[Saco interno]"     id="prop-sack"          value="">
+  <input type="hidden" name="properties[Plantilla]"        id="prop-template"      value="">
+
+  <div class="product-grid">
+
+    <!-- LEFT: imagen sticky -->
+    <div class="product-left">
+      <div id="imagePanelWrap" style="position:relative;overflow:hidden;background:#c9ccd0;transition:background .6s;">
+        <img id="configPreview"
+             src="{{ product.featured_image | img_url: '1600x' }}"
+             alt="{{ product.title | escape }}"
+             style="display:block;width:100%;height:100%;object-fit:cover;transition:opacity .4s;">
+        <img id="configHover" src="" alt=""
+             style="position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .3s;pointer-events:none;">
+
+        <!-- Badge -->
+        <div style="position:absolute;top:20px;left:20px;z-index:2;background:var(--bg);padding:8px 14px;">
+         <span style="font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--text);">
+  {% if current_language_prefix == 'es' %}
+    Personalizable
+  {% else %}
+    Customizable
+  {% endif %}
+</span>
+        </div>
+
+        <!-- Price overlay -->
+        <div style="position:absolute;bottom:0;left:0;right:0;padding:40px 28px 22px;background:linear-gradient(to top,rgba(0,0,0,.35),transparent);pointer-events:none;z-index:2;">
+          <div style="display:flex;align-items:baseline;gap:10px;">
+            <p id="configPriceOverlay" style="font-size:22px;font-weight:200;color:#fff;margin:0;letter-spacing:.06em;">{{ product.selected_or_first_available_variant.price | money }}</p>
+            <span id="configNameOverlay" style="font-size:11px;font-weight:400;letter-spacing:.24em;text-transform:uppercase;color:rgba(255,255,255,.7);">{{ product.title | upcase }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: configurador -->
+    <div class="product-right" style="padding:40px 32px 80px;border-left:1px solid var(--border);min-height:calc(100vh - 73px);">
+
+      <!-- Header del producto -->
+      <div class="animate-fade-up" style="margin-bottom:32px;padding-bottom:28px;border-bottom:1px solid var(--border);">
+        <span class="section-label block mb-3">KAYNOTOMIA</span>
+        <h1 id="descTitle" style="font-family:'Syncopate',sans-serif;font-size:clamp(1.4rem,3vw,2rem);font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text);margin:0 0 14px;">{{ product.title | upcase }}</h1>
+        <div style="display:flex;align-items:baseline;gap:14px;margin-bottom:16px;">
+          <span id="configPrice" style="font-size:26px;font-weight:200;color:var(--text);letter-spacing:.04em;">{{ product.selected_or_first_available_variant.price | money }}</span>
+          <span style="font-size:11px;letter-spacing:.2em;color:var(--text-light);">
+  {% if current_language_prefix == 'es' %}
+    IVA incluido
+  {% else %}
+    VAT included
+  {% endif %}
+</span>
+        </div>
+        <p id="descBody" style="font-size:14px;font-weight:300;color:var(--text-light);line-height:1.95;letter-spacing:.03em;max-width:480px;"></p>
+      </div>
+
+      <!-- Selector de color/modelo -->
+      <div style="margin-bottom:28px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+          <span style="font-size:11px;font-weight:500;letter-spacing:.3em;text-transform:uppercase;color:var(--text);">
+  {% if current_language_prefix == 'es' %}
+    Color del bolso
+  {% else %}
+    Bag Color
+  {% endif %}
+</span>
+          <span id="selectedColorLabel" style="font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--text-muted);"></span>
+        </div>
+        <div id="modelOptions" style="display:flex;gap:10px;flex-wrap:wrap;"></div>
+      </div>
+
+      <!-- Dimensiones -->
+      <div style="margin-bottom:36px;">
+        <div class="measurements-grid">
+          <div><span class="meas-label">Height</span><span class="meas-value">{{ section.settings.height | default: '14 cm' }}</span></div>
+          <div><span class="meas-label">Broad</span><span class="meas-value">{{ section.settings.width | default: '8 cm' }}</span></div>
+          <div><span class="meas-label">Base</span><span class="meas-value">{{ section.settings.base | default: '18 cm' }}</span></div>
+        </div>
+      </div>
+
+      <!-- Título personalización -->
+      <div style="margin-bottom:12px;">
+        <span style="font-size:11px;font-weight:500;letter-spacing:.3em;text-transform:uppercase;color:var(--text-light);">
+  {% if current_language_prefix == 'es' %}
+    Personalización
+  {% else %}
+    Customization
+  {% endif %}
+</span>
+      </div>
+
+      <!-- Step 01: Saco -->
+      <div class="config-step step-locked" id="step-sack">
+        <div class="step-node">
+          <div class="step-node-inner"></div>
+          <svg class="step-node-check" width="7" height="7" viewBox="0 0 8 8" fill="none">
+            <polyline points="1,4 3,6 7,2" stroke="var(--bg)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="step-header" data-toggle="sack">
+          <span class="step-num">01</span>
+          <div style="flex:1;">
+            {% assign current_language_prefix = localization.language.iso_code | split: '-' | first %}
+
+<h4 class="step-title">
+  {% if current_language_prefix == 'es' %}
+    Saco de terciopelo
+  {% else %}
+    Velvet Pouch Color
+  {% endif %}
+</h4>
+            <p class="step-summary" id="summary-sack"></p>
+          </div>
+        </div>
+        <div class="step-body step-body-hidden" id="body-sack">
+          <div class="flex gap-6 items-start pt-5" id="sackColors"></div>
+        </div>
+      </div>
+
+      <!-- Step 02: Accessories-->
+      <div class="config-step step-locked" id="step-template">
+        <div class="step-node">
+          <div class="step-node-inner"></div>
+          <svg class="step-node-check" width="7" height="7" viewBox="0 0 8 8" fill="none">
+            <polyline points="1,4 3,6 7,2" stroke="var(--bg)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="step-header" data-toggle="template">
+          <span class="step-num">02</span>
+          <div style="flex:1;">
+           <h4 class="step-title">
+  {% if current_language_prefix == 'es' %}
+    Accesorios
+  {% else %}
+    Accessories
+  {% endif %}
+</h4>
+            <p class="step-summary" id="summary-template"></p>
+          </div>
+        </div>
+        <div class="step-body step-body-hidden" id="body-template">
+          <div class="flex gap-6 items-start pt-5" id="templateColors"></div>
+        </div>
+      </div>
+
+      <!-- Add to Cart -->
+      <!-- Add to Cart -->
+<div id="addToCartWrap" style="margin-top:36px;opacity:0;transform:translateY(16px);transition:opacity .55s,transform .55s;pointer-events:none;">
+
+  <button
+    id="addToCartBtn"
+    type="submit"
+    class="btn-luxury btn-luxury-dark"
+    style="width:100%;text-align:center;padding:20px 40px;"
+  >
+    {% if current_language_prefix == 'es' %}
+      Añadir al carrito
+    {% else %}
+      Add to cart
+    {% endif %}
+  </button>
+
+  <p class="cart-msg" id="cartMessage"></p>
+
+  <p style="font-size:11px;letter-spacing:.14em;color:var(--text-muted);text-align:center;margin-top:14px;">
+    {% if current_language_prefix == 'es' %}
+      Envío gratuito en pedidos superiores a €200
+    {% else %}
+      Free shipping on orders over €200
+    {% endif %}
+  </p>
+
+</div>
+
+      <!-- Info adicional -->
+      <div style="margin-top:40px;padding-top:32px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:14px;">
+        <details style="cursor:pointer;" open>
+          <summary style="font-size:11px;font-weight:500;letter-spacing:.28em;text-transform:uppercase;color:var(--text);list-style:none;display:flex;justify-content:space-between;align-items:center;">
+  {% if current_language_prefix == 'es' %}
+    Materiales
+  {% else %}
+    Materials
+  {% endif %}
+
+  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+    <path d="M6 9l6 6 6-6"/>
+  </svg>
+</summary>
+          <p style="font-size:13px;font-weight:300;color:var(--text-light);line-height:2;letter-spacing:.02em;margin-top:12px;">
+  {% if current_language_prefix == 'es' %}
+    Carcasa fabricada mediante impresión 3D, saco de terciopelo lavable hecho a mano, herrajes metálicos y llavero distintivo de la marca incluido.
+  {% else %}
+    {{ section.settings.materials | default: 'Crafted with a 3D-printed case, a handmade washable velvet pouch, metal hardware, and a signature branded keychain.' }}
+  {% endif %}
+</p>
+        </details>
+        <details style="cursor:pointer;">
+          <summary style="font-size:11px;font-weight:500;letter-spacing:.28em;text-transform:uppercase;color:var(--text);list-style:none;display:flex;justify-content:space-between;align-items:center;">
+  {% if current_language_prefix == 'es' %}
+    Envíos y devoluciones
+  {% else %}
+    Shipping & Returns
+  {% endif %}
+
+  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+    <path d="M6 9l6 6 6-6"/>
+  </svg>
+</summary>
+         <p style="font-size:13px;font-weight:300;color:var(--text-light);line-height:2;letter-spacing:.02em;margin-top:12px;">
+  {% if current_language_prefix == 'es' %}
+    Envío estándar en un plazo de 5 a 7 días laborables. Envío gratuito en pedidos superiores a €200. Se aceptan devoluciones dentro de los 14 días siguientes a la recepción.
+  {% else %}
+    Standard shipping within 5–7 business days. Free shipping on orders over €200. Returns accepted within 14 days of delivery.
+  {% endif %}
+</p>
+        </details>
+      </div>
+
+    </div>
+  </div>
+</form>
+
+<!-- Toast -->
+<div id="cartToast">
+  {% if current_language_prefix == 'es' %}
+    Añadido al carrito
+  {% else %}
+    Added to cart
+  {% endif %}
+</div>
+
+{% schema %}
+{
+  "name": "Product page",
+  "settings": [
+    {"type":"text",    "id":"height",        "label":"Altura",              "default":"14 cm"},
+    {"type":"text",    "id":"width",         "label":"Ancho",               "default":"8 cm"},
+    {"type":"text",    "id":"base",          "label":"Base",                "default":"18 cm"},
+    {"type":"textarea","id":"materials",     "label":"Materials",          "default":"Case fabricado mediante impresión 3D. Saco de terciopelo hecho a mano, lavable. Herrajes en metal. Llavero de marca incluido."},
+    {"type":"textarea","id":"shipping",      "label":"Envío y devoluciones","default":"Envío estándar en 5–7 días laborables. Envío gratuito en pedidos superiores a €200. Devoluciones aceptadas dentro de los 14 días siguientes a la recepción."},
+    {"type":"text",    "id":"shipping_note", "label":"Nota envío gratuito", "default":"Envío gratuito en pedidos superiores a €200"}
+  ],
+  "blocks": [
+    {
+      "type": "sack",
+      "name": "Saco — Color",
+      "settings": [
+        {"type":"text",        "id":"name",  "label":"Nombre",                    "default":"Negro"},
+        {"type":"text",        "id":"hex",   "label":"Color hex",                 "default":"#1a1a1a"},
+        {"type":"image_picker","id":"img_v1","label":"Imagen Variante 1 (Negro)"},
+        {"type":"image_picker","id":"img_v2","label":"Imagen Variante 2 (Gris)"},
+        {"type":"image_picker","id":"img_v3","label":"Imagen Variante 3 (Blanco)"},
+        {"type":"image_picker","id":"image", "label":"Imagen fallback (si no hay por variante)"}
+      ]
+    },
+    {
+      "type": "template",
+      "name": "Accessories",
+      "settings": [
+        {"type":"text",        "id":"name",  "label":"Nombre",    "default":"Blanco"},
+        {"type":"text",        "id":"hex",   "label":"Color hex", "default":"#F0EEE9"},
+        {"type":"image_picker","id":"img_v1","label":"Imagen Variante 1 (Negro)"},
+        {"type":"image_picker","id":"img_v2","label":"Imagen Variante 2 (Gris)"},
+        {"type":"image_picker","id":"img_v3","label":"Imagen Variante 3 (Blanco)"},
+        {"type":"image_picker","id":"image", "label":"Imagen fallback"}
+      ]
+    },
+    {
+      "type": "variant_desc",
+      "name": "Variante — Descripción",
+      "settings": [
+        {"type":"text",    "id":"variant_title","label":"Nombre de variante (debe coincidir exactamente)", "default":"Negro"},
+        {"type":"text",    "id":"desc_title",   "label":"Título descriptivo",  "default":"Nimbus Black"},
+        {"type":"textarea","id":"desc_body",    "label":"Descripción (párrafos separados por línea en blanco)"},
+        {"type":"text",    "id":"image_bg",     "label":"Color de fondo imagen (hex)", "default":"#c9ccd0"}
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product page",
+      "blocks": [
+        {"type":"sack",     "settings":{"name":"Negro",   "hex":"#1a1a1a"}},
+        {"type":"sack",     "settings":{"name":"Blanco",  "hex":"#F5F5F0"}},
+        {"type":"template", "settings":{"name":"Blanco",  "hex":"#F0EEE9"}},
+        {"type":"template", "settings":{"name":"Negro",   "hex":"#1a1a1a"}},
+        {"type":"template", "settings":{"name":"Burdeos", "hex":"#7A2035"}},
+        {"type":"template", "settings":{"name":"Lila",    "hex":"#A98EC8"}}
+      ]
+    }
+  ]
+}
+{% endschema %}
