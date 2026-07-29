@@ -21,6 +21,7 @@
                            srcset="{{ card_img | img_url: '400x' }} 400w, {{ card_img | img_url: '800x' }} 800w"
                            sizes="(max-width:768px) 100vw, 33vw"
                            alt="{{ card_img.alt | default: variant.title | escape }}"
+                           width="{{ card_img.width }}" height="{{ card_img.height }}"
                            class="w-full h-full object-cover" loading="lazy">
                     {%- endif -%}
                   </div>
@@ -39,6 +40,7 @@
                          srcset="{{ product.featured_image | img_url: '400x' }} 400w, {{ product.featured_image | img_url: '800x' }} 800w"
                          sizes="(max-width:768px) 100vw, 33vw"
                          alt="{{ product.featured_image.alt | escape }}"
+                         width="{{ product.featured_image.width }}" height="{{ product.featured_image.height }}"
                          class="w-full h-full object-cover" loading="lazy">
                   {%- endif -%}
                 </div>

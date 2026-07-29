@@ -37,11 +37,11 @@
     <div class="config-left" style="border-right:none;">
       <div id="imagePanelWrap" style="position:relative;overflow:hidden;background:#c9ccd0;transition:background .6s;border-radius:4px;aspect-ratio:4/5;display:flex;align-items:center;justify-content:center;">
         {%- if cfg.featured_image -%}
-          <img id="configPreview" src="{{ cfg.featured_image | img_url: '1000x' }}" alt="{{ cfg.featured_image.alt | escape }}" style="display:block;width:100%;height:100%;object-fit:cover;transition:opacity .4s;">
+          <img id="configPreview" src="{{ cfg.featured_image | img_url: '1000x' }}" alt="{{ cfg.featured_image.alt | escape }}" width="{{ cfg.featured_image.width }}" height="{{ cfg.featured_image.height }}" style="display:block;width:100%;height:100%;object-fit:cover;transition:opacity .4s;">
         {%- else -%}
-          <img id="configPreview" src="" alt="" style="display:block;width:100%;height:100%;object-fit:cover;transition:opacity .4s;">
+          <img id="configPreview" src="" alt="" width="1000" height="1250" style="display:block;width:100%;height:100%;object-fit:cover;transition:opacity .4s;">
         {%- endif -%}
-        <img id="configHover" src="" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .3s;pointer-events:none;" aria-hidden="true">
+        <img id="configHover" src="" alt="" width="1000" height="1250" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .3s;pointer-events:none;" aria-hidden="true">
         <div style="position:absolute;bottom:0;left:0;right:0;padding:40px 32px 24px;background:linear-gradient(to top,rgba(0,0,0,.3),transparent);pointer-events:none;">
           <div style="display:flex;align-items:baseline;gap:10px;">
             <h3 id="configName" style="font-size:11px;font-weight:400;letter-spacing:.28em;text-transform:uppercase;color:#fff;margin:0;"></h3>
