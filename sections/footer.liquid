@@ -142,7 +142,7 @@
           <!-- NOSOTROS -->
           <li>
             <a
-              href="{{ routes.root_url }}pages/about"
+              href="{{ routes.root_url | append: '/pages/about' | replace: '//', '/' }}"
               style="
                 font-size:14px;
                 font-weight:300;
@@ -165,7 +165,7 @@
           <!-- CONTACTO -->
           <li>
             <a
-              href="{{ routes.root_url }}pages/contact"
+              href="{{ routes.root_url | append: '/pages/contact' | replace: '//', '/' }}"
               style="
                 font-size:14px;
                 font-weight:300;
@@ -216,9 +216,16 @@
               {% if link.url contains '/policies/' %}
 
                 {% assign policy_slug = link.url | split: '/policies/' | last %}
+                {% comment %}
+                  routes.root_url es '/' en el idioma por defecto pero
+                  '/es' (sin barra final) en los demás — sin normalizar,
+                  concatenar produce '/espolicies/...' en vez de
+                  '/es/policies/...'.
+                {% endcomment %}
                 {% assign legal_link_url = routes.root_url
-                  | append: 'policies/'
+                  | append: '/policies/'
                   | append: policy_slug
+                  | replace: '//', '/'
                 %}
 
               {% endif %}

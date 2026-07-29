@@ -798,8 +798,12 @@
         </p>
       {%- endfor -%}
 
+      {%- assign split_cta_href = section.settings.split_cta_url -%}
+      {%- if split_cta_href == blank -%}
+        {%- assign split_cta_href = routes.root_url | append: '/products/nimbus' | replace: '//', '/' -%}
+      {%- endif -%}
       <a
-        href="{{ section.settings.split_cta_url | default: routes.root_url | append: 'products/nimbus' }}"
+        href="{{ split_cta_href }}"
         class="link-underline reveal"
         style="
           font-size:12px;
@@ -1056,8 +1060,12 @@
     {{ section.settings.cta_heading | default: 'NIMBUS' }}
   </h2>
 
+  {%- assign cta_href = section.settings.cta_url -%}
+  {%- if cta_href == blank -%}
+    {%- assign cta_href = routes.root_url | append: '/products/nimbus' | replace: '//', '/' -%}
+  {%- endif -%}
   <a
-    href="{{ section.settings.cta_url | default: routes.root_url | append: 'products/nimbus' }}"
+    href="{{ cta_href }}"
     class="reveal btn-luxury btn-luxury-dark"
     style="animation-delay:.2s;"
   >
