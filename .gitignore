@@ -14,6 +14,8 @@ node_modules/
 # Binarios pesados: NO versionar. Git conserva los blobs en el historial
 # para siempre, aunque después se borren.
 *.gif
+*.mp4
+*.mov
 assets/*.psd
 assets/*.ai
 assets/*.sketch
