@@ -398,6 +398,8 @@ window.addEventListener('load', revealOnScroll);
       .then(function(cart){
         var cnt=document.getElementById('cartCount');
         if(cnt){cnt.textContent=cart.item_count;cnt.style.display='flex';}
+        var cntMenu=document.getElementById('cartCountMenu');
+        if(cntMenu){cntMenu.textContent=cart.item_count;}
         var msg=document.getElementById('cartMessage');
         if(msg){msg.textContent='✓ Añadido al carrito';msg.style.opacity='1';
           setTimeout(function(){msg.style.opacity='0';},3000);}
@@ -688,6 +690,8 @@ revealOnScroll();
       .then(function(cart){
         var cnt = document.getElementById('cartCount');
         if(cnt){ cnt.textContent=cart.item_count; cnt.style.display='flex'; }
+        var cntMenu = document.getElementById('cartCountMenu');
+        if(cntMenu){ cntMenu.textContent=cart.item_count; }
         var toast = document.getElementById('cartToast');
         if(toast){ toast.classList.add('show'); setTimeout(function(){ toast.classList.remove('show'); },2800); }
         addBtn.disabled=false; addBtn.textContent='Añadir al Carrito';
